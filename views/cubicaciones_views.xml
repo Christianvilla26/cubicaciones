@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="cubicaciones_form_view" model="ir.ui.view">
+        <field name="name">cubicaciones_form_view</field>
+        <field name="model">cubicacion.order</field>
+        <field name="arch" type="xml">
+            <form string="Cubicaciones Form">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="company_id" invisible="1"/>
+                            <field name="proveedor"/>
+                            <field name="contract_id"/>
+                            <field name="aprobada"/>
+                        </group>
+                        <group>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                            <field name="total"/>
+                            <field name="nomina"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Partidas">
+                            <field name="partidas">
+                                <tree string="Partidas Tree" editable="bottom">
+                                    <field name="cubicacion_order_id" invisible="1"/>
+                                    <field name="name"/>
+                                    <field name="partida_type"/>
+                                    <field name="partida_subtype_id"/>
+                                    <field name="contract_line_id" domain="[('contrato_id', '=', parent.contract_id)]"/>
+                                    <field name="cantidad"/>
+                                    <field name="unit_price"/>
+                                    <field name="subtotal"/>
+                                    <field name="ISR"/>
+                                    <field name="OtroImpuesto"/>
+                                    <field name="subtotal2"/>
+                                    <field name="retencion"/>
+                                    <field name="total"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="cubicaciones_tree_view" model="ir.ui.view">
+        <field name="name">cubicaciones_tree_view</field>
+        <field name="model">cubicacion.order</field>
+        <field name="arch" type="xml">
+            <tree string="Cubicaciones Tree">
+                <field name="name"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="partidas"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="cubicaciones_action" model="ir.actions.act_window">
+        <field name="name">Cubicaciones</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">cubicacion.order</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Cree su primera cubicación!
+          </p>
+        </field>
+    </record>
+
+    <!-- This Menu Item must have a parent and an action -->
+    <menuitem id="cubicaciones_menu_root" name="Cubicaciones" web_icon="cubicaciones,static/description/icon.png"
+              action="cubicaciones_action" sequence="10"/>
+</odoo>

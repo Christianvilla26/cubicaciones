@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="contratos_order_form_view" model="ir.ui.view">
+        <field name="name">contratos_order_form_view</field>
+        <field name="model">contratos.order</field>
+        <field name="arch" type="xml">
+            <form string="contratos_order Form">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="company_id"/>
+                            <field name="Contratista"/>
+                        </group>
+                        <group>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                            <field name="monto_contrato"/>
+                            <field name="monto_faltante"/>
+                            <field name="state"/>
+                        </group>
+                    </group>
+                    <notebook>
+                            <page string="Desglose">
+                                <field name="contrato_lines">
+                                    <tree string="Partidas Tree" editable="bottom" delete="false">
+                                        <field name="contrato_id" invisible="1"/>
+                                        <field name="name"/>
+                                        <field name="Tipo"/>
+                                        <field name="avance" attrs="{'readonly': [('Tipo', '!=', 'avance')]}"/>
+                                        <field name="Producto" attrs="{'readonly': [('Tipo', '!=', 'intercambio')]}" domain="[('sale_ok', '=', True)]"/>
+                                        <field name="precio_unitario"/>
+                                        <field name="cubicacion" attrs="{'readonly': [('Tipo', '!=', 'cubicacion')]}" domain="[('proveedor', '=', parent.Contratista),('aprobada', '=', True)]"/>
+                                        <field name="porcentaje"/>
+                                        <field name="cubicaciones_lines_ids"/>
+                                        <field name="Monto"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="contratos_order_tree_view" model="ir.ui.view">
+        <field name="name">contratos_order_tree_view</field>
+        <field name="model">contratos.order</field>
+        <field name="arch" type="xml">
+            <tree string="contratos_order Tree">
+                <field name="name"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="monto_contrato"/>
+                <field name="monto_faltante"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="contratos_order_action" model="ir.actions.act_window">
+        <field name="name">Contratos</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">contratos.order</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Cree su primer contrato!
+          </p>
+        </field>
+    </record>
+
+    <!-- This Menu Item must have a parent and an action -->
+    <menuitem id="contratos_menu" name="Contrato" action="contratos_order_action"
+              sequence="2" parent="cubicaciones.cubicaciones_menu_root"/>
+</odoo>
