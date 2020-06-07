@@ -9,8 +9,10 @@
     ],
     "data": [
         'security/ir.model.access.csv',
+        'views/pagos_wizzard.xml',
         'views/cubicaciones_views.xml',
         'views/nomina_views.xml',
         'views/contrato_views.xml',
+        'views/pagos_views.xml'
     ],
 }

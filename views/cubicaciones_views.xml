@@ -5,20 +5,22 @@
         <field name="model">cubicacion.order</field>
         <field name="arch" type="xml">
             <form string="Cubicaciones Form">
+                <header>
+                    <button name="%(cubicaciones.pagos_wizzard)d" string="Pagar Lineas Seleccionadas" type="action" class="btn-primary">
+
+                    </button>
+                </header>
                 <sheet>
                     <group>
                         <group>
                             <field name="name"/>
                             <field name="company_id" invisible="1"/>
                             <field name="proveedor"/>
-                            <field name="contract_id"/>
-                            <field name="aprobada"/>
                         </group>
                         <group>
                             <field name="date_start"/>
-                            <field name="date_end"/>
-                            <field name="total"/>
                             <field name="nomina"/>
+                            <field name="contract_id"/>
                         </group>
                     </group>
                     <notebook>
@@ -26,18 +28,20 @@
                             <field name="partidas">
                                 <tree string="Partidas Tree" editable="bottom">
                                     <field name="cubicacion_order_id" invisible="1"/>
+                                    <field name="seleccion" attrs="{'invisible': [('Pagada','=', True)]}"/>
                                     <field name="name"/>
                                     <field name="partida_type"/>
                                     <field name="partida_subtype_id"/>
-                                    <field name="contract_line_id" domain="[('contrato_id', '=', parent.contract_id)]"/>
                                     <field name="cantidad"/>
                                     <field name="unit_price"/>
                                     <field name="subtotal"/>
-                                    <field name="ISR"/>
-                                    <field name="OtroImpuesto"/>
-                                    <field name="subtotal2"/>
-                                    <field name="retencion"/>
-                                    <field name="total"/>
+                                    <field name="Pagada" readonly="1"/>
+
+<!--                                    <field name="ISR"/>-->
+<!--                                    <field name="OtroImpuesto"/>-->
+<!--                                    <field name="subtotal2"/>-->
+<!--                                    <field name="retencion"/>-->
+<!--                                    <field name="total"/>-->
                                 </tree>
                             </field>
                         </page>

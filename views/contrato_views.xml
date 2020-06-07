@@ -11,13 +11,7 @@
                             <field name="name"/>
                             <field name="company_id"/>
                             <field name="Contratista"/>
-                        </group>
-                        <group>
-                            <field name="date_start"/>
-                            <field name="date_end"/>
-                            <field name="monto_contrato"/>
-                            <field name="monto_faltante"/>
-                            <field name="state"/>
+                             <field name="date_start"/>
                         </group>
                     </group>
                     <notebook>
@@ -30,8 +24,8 @@
                                         <field name="avance" attrs="{'readonly': [('Tipo', '!=', 'avance')]}"/>
                                         <field name="Producto" attrs="{'readonly': [('Tipo', '!=', 'intercambio')]}" domain="[('sale_ok', '=', True)]"/>
                                         <field name="precio_unitario"/>
-                                        <field name="cubicacion" attrs="{'readonly': [('Tipo', '!=', 'cubicacion')]}" domain="[('proveedor', '=', parent.Contratista),('aprobada', '=', True)]"/>
                                         <field name="porcentaje"/>
+                                        <field name="adeudado"/>
                                         <field name="cubicaciones_lines_ids"/>
                                         <field name="Monto"/>
                                     </tree>
@@ -49,11 +43,8 @@
         <field name="arch" type="xml">
             <tree string="contratos_order Tree">
                 <field name="name"/>
+                <field name="Contratista"></field>
                 <field name="date_start"/>
-                <field name="date_end"/>
-                <field name="monto_contrato"/>
-                <field name="monto_faltante"/>
-                <field name="state"/>
             </tree>
         </field>
     </record>

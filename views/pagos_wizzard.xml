@@ -1,0 +1,37 @@
+<odoo>
+    <data>
+        <record id="pagos_form_view_wizzard" model="ir.ui.view">
+        <field name="name">pagos_form_view_wizzard</field>
+        <field name="model">pagos.wizzard</field>
+        <field name="arch" type="xml">
+            <form string="Cubicaciones Form">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="monto" readonly="1"/>
+                            <field name="proveedor" readonly="1"/>
+                            <field name="concepto"/>
+                        </group>
+                        <group>
+                            <field name="cubicacion" readonly="1"/>
+                            <field name="insumo" domain="[('contrato_id', '=', contrato)]"/>
+                            <field name="contrato" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="crearPago" type="object" string="Crear Pago"></button>
+                </footer>
+            </form>
+
+        </field>
+    </record>
+        <record id="pagos_wizzard" model="ir.actions.act_window" >
+            <field name="name">Registrar Un Pago</field>
+            <field name="target">new</field>
+            <field name="view_type">form</field>
+            <field name="res_model">pagos.wizzard</field>
+            <field name="view_id" ref="pagos_form_view_wizzard"></field>
+        </record>
+    </data>
+</odoo>

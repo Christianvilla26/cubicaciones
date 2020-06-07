@@ -7,3 +7,4 @@ access_partida_subtype,access_partida_subtype,model_partida_subtype,mrp.group_mr
 access_contrato_order,access_contrato_order,model_contratos_order,mrp.group_mrp_manager,1,1,1,1
 access_contrato_order_line,access_contrato_order_line,model_contratos_order_line,mrp.group_mrp_manager,1,1,1,1
 access_nomina_order,access_nomina_order,model_nomina_order,mrp.group_mrp_manager,1,1,1,1
+access_pagos_order,access_pagos_order,model_pagos_order,mrp.group_mrp_manager,1,1,1,1
