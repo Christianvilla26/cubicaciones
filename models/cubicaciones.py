@@ -135,7 +135,8 @@ class pagos_wizzard(models.TransientModel):
     monto = fields.Float('Monto')
     contrato = fields.Many2one('contratos.order', string='Contrato')
     proveedor = fields.Many2one('res.partner', string='Proveedor', domain=[('supplier', '=', True)])
-    insumo = fields.Many2one('contratos.order.line', string='Insumo')
+    insumo = fields.Many2one('contratos.order.line', string='Yipeta')
+    insumo2 = fields.Many2one('contratos.order.line', string='Insumo 2')
     cubicacion = fields.Many2one('cubicacion.order', string='cubicacion')
     concepto = fields.Char(string='concepto')
 
@@ -166,7 +167,9 @@ class pagos_wizzard(models.TransientModel):
             Impuesto2 = self.monto * 0.0161
         MontosDespuesDeImpuestos = self.monto - (Impuesto1 + Impuesto2)
 
+
         Intercambio = 0
+
 
         if self.insumo:
             temp = self.insumo.porcentaje/100
@@ -178,12 +181,27 @@ class pagos_wizzard(models.TransientModel):
                 Intercambio = Resta
 
         MontoDef = MontosDespuesDeImpuestos - Intercambio
+        print(MontoDef)
+
+        if self.insumo2:
+            temp = self.insumo2.porcentaje / 100
+
+            Intercambio2 = temp * MontoDef
+            Resta = self.insumo2.precio_unitario - self.insumo2.adeudado
+            print(Resta)
+            print(Intercambio2)
+            if Intercambio2 >= Resta:
+                Intercambio2 = Resta
+
+        MontoDef = MontoDef - Intercambio2
+
+
 
 
         pago.create({'concepto': self.concepto, 'proveedor': self.proveedor.id,
-                     'contract_line_id': self.insumo.id, 'Monto': self.monto,
+                     'contract_line_id': self.insumo.id,'contract_line_id2': self.insumo2.id,'Monto': self.monto,
                      'Impuesto1': Impuesto1,'Impuesto2': Impuesto2, 'MontoDespuesDeImpuestos': MontosDespuesDeImpuestos,
-                     'RetencionIntercambio': Intercambio, 'MontoDefinitivo': MontoDef})
+                     'RetencionIntercambio': Intercambio,'RetencionIntercambio2': Intercambio2, 'MontoDefinitivo': MontoDef})
         for line in self.cubicacion.partidas:
             if(line.seleccion and not line.Pagada):
                 line.Pagada = True
@@ -198,6 +216,7 @@ class pagos(models.Model):
     concepto = fields.Char('Concepto', required=True)
     proveedor = fields.Many2one('res.partner', string='Proveedor', domain=[('supplier', '=', True)])
     contract_line_id = fields.Many2one('contratos.order.line', string='Insumo')
+    contract_line_id2 = fields.Many2one('contratos.order.line', string='Insumo2')
     # La sumatoria de todas las lineas que seleccione en las cubicaciones
     Monto = fields.Float('Monto')
 
@@ -210,6 +229,7 @@ class pagos(models.Model):
 
     # Variable final en la que se hacen todos los calculos de los impuestos
     RetencionIntercambio = fields.Float('Intercambio')
+    RetencionIntercambio2 = fields.Float('Intercambio2')
 
     # Al monto neto le calculamos el porcentaje de la cuota de intercambio y lo guardamos en una variable
     MontoDefinitivo = fields.Float('Al proveedor')
@@ -263,9 +283,11 @@ class linea_contrato(models.Model):
         for rec in self:
             temp = 0
             for pago in rec.pagos_ids:
-                temp = temp + pago.RetencionIntercambio
-            # if temp > rec.precio_unitario:
-                # raise ValidationError('NO PUEDE PAGAR MAS')
+                if rec.Tipo == 'avance':
+                    temp = temp + pago.RetencionIntercambio2
+                    print('entre aqui')
+                if rec.Tipo == 'intercambio':
+                    temp = temp + pago.RetencionIntercambio
             rec.adeudado = temp
 
     @api.depends('Tipo', 'avance', 'Producto', 'porcentaje')

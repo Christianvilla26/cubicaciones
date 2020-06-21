@@ -15,6 +15,7 @@
                         <group>
                             <field name="cubicacion" readonly="1"/>
                             <field name="insumo" domain="[('contrato_id', '=', contrato)]"/>
+                            <field name="insumo2" domain="[('contrato_id', '=', contrato)]"/>
                             <field name="contrato" readonly="1"/>
                         </group>
                     </group>
