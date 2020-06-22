@@ -198,13 +198,16 @@ class pagos_wizzard(models.TransientModel):
 
 
 
-        pago.create({'concepto': self.concepto, 'proveedor': self.proveedor.id,
-                     'contract_line_id': self.insumo.id,'contract_line_id2': self.insumo2.id,'Monto': self.monto,
+        pago_nuevo = pago.create({'concepto': self.concepto, 'proveedor': self.proveedor.id,
+                     # 'contract_line_id': self.insumo.id,
+                     'contract_line_id2': self.insumo2.id,'Monto': self.monto,
                      'Impuesto1': Impuesto1,'Impuesto2': Impuesto2, 'MontoDespuesDeImpuestos': MontosDespuesDeImpuestos,
                      'RetencionIntercambio': Intercambio,'RetencionIntercambio2': Intercambio2, 'MontoDefinitivo': MontoDef})
         for line in self.cubicacion.partidas:
             if(line.seleccion and not line.Pagada):
                 line.Pagada = True
+        for line in self.contrato.contrato_lines:
+            line.pago_id = pago_nuevo.id
 
 
 
@@ -215,7 +218,8 @@ class pagos(models.Model):
 
     concepto = fields.Char('Concepto', required=True)
     proveedor = fields.Many2one('res.partner', string='Proveedor', domain=[('supplier', '=', True)])
-    contract_line_id = fields.Many2one('contratos.order.line', string='Insumo')
+    # contract_line_id = fields.Many2one('contratos.order.line', string='Insumo')
+    contract_line_id = fields.One2many('contratos.order.line', 'pago_id', string='Insumo')
     contract_line_id2 = fields.Many2one('contratos.order.line', string='Insumo2')
     # La sumatoria de todas las lineas que seleccione en las cubicaciones
     Monto = fields.Float('Monto')
@@ -228,8 +232,8 @@ class pagos(models.Model):
     MontoDespuesDeImpuestos = fields.Float('Despues De Impuestos')
 
     # Variable final en la que se hacen todos los calculos de los impuestos
-    RetencionIntercambio = fields.Float('Intercambio')
-    RetencionIntercambio2 = fields.Float('Intercambio2')
+    RetencionIntercambio = fields.Float('Intercambio Yipeta')
+    RetencionIntercambio2 = fields.Float('Avance Efectivo')
 
     # Al monto neto le calculamos el porcentaje de la cuota de intercambio y lo guardamos en una variable
     MontoDefinitivo = fields.Float('Al proveedor')
@@ -273,22 +277,32 @@ class linea_contrato(models.Model):
     precio_unitario = fields.Float('Precio unitario', compute='_compute_total')
     adeudado = fields.Float('Pagado', compute='compute_adeudado')
 
-    pagos_ids = fields.One2many('pagos.order', 'contract_line_id')
+    pago_id = fields.Many2one('pagos.order', string='Pago')
 
     Monto = fields.Float('Monto', compute='_compute_total')
     contrato_id = fields.Many2one('contratos.order', 'Contrato')
 
-    @api.depends('pagos_ids')
+    @api.depends('pago_id', 'Tipo', 'pago_id.RetencionIntercambio2', 'pago_id.RetencionIntercambio')
     def compute_adeudado(self):
         for rec in self:
-            temp = 0
-            for pago in rec.pagos_ids:
-                if rec.Tipo == 'avance':
-                    temp = temp + pago.RetencionIntercambio2
-                    print('entre aqui')
-                if rec.Tipo == 'intercambio':
-                    temp = temp + pago.RetencionIntercambio
-            rec.adeudado = temp
+            # temp = 0
+            if rec.Tipo == 'intercambio':
+                print('intercambio', rec.pago_id)
+                print(rec.pago_id.mapped('RetencionIntercambio'))
+                rec.adeudado = sum([pago.RetencionIntercambio for pago in rec.pago_id])
+            else:
+                print('avance', rec.pago_id)
+                print(rec.pago_id.mapped('RetencionIntercambio2'))
+                rec.adeudado = sum([pago.RetencionIntercambio2 for pago in rec.pago_id])
+            #for pago in rec.pagos_ids:
+            #    if rec.Tipo == 'intercambio':
+            #        rec.adeudado += pago.RetencionIntercambio
+            #        print('pago 1 = ', pago.RetencionIntercambio)
+            #    else:
+            #        rec.adeudado += pago.RetencionIntercambio2
+            #        print('pago 2: ', pago.RetencionIntercambio2)
+
+            rec.adeudado
 
     @api.depends('Tipo', 'avance', 'Producto', 'porcentaje')
     def _compute_total(self):
