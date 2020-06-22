@@ -21,6 +21,7 @@
                             <field name="date_start"/>
                             <field name="nomina"/>
                             <field name="contract_id"/>
+                            <field name="total"/>
                         </group>
                     </group>
                     <notebook>

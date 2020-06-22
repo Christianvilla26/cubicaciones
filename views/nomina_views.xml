@@ -44,8 +44,8 @@
             <tree string="nomina Tree">
                 <field name="name"/>
                 <field name="date_start"/>
-                <field name="date_end"/>
                 <field name="cubicaciones"/>
+                <field name="Monto"/>
             </tree>
         </field>
     </record>
