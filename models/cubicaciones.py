@@ -183,6 +183,8 @@ class pagos_wizzard(models.TransientModel):
         MontoDef = MontosDespuesDeImpuestos - Intercambio
         print(MontoDef)
 
+        Intercambio2 = 0
+
         if self.insumo2:
             temp = self.insumo2.porcentaje / 100
 
@@ -194,6 +196,9 @@ class pagos_wizzard(models.TransientModel):
                 Intercambio2 = Resta
 
         MontoDef = MontoDef - Intercambio2
+
+
+
 
 
 
