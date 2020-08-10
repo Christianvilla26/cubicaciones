@@ -6,9 +6,7 @@
         <field name="arch" type="xml">
             <form string="Cubicaciones Form">
                 <header>
-                    <button name="%(cubicaciones.pagos_wizzard)d" string="Pagar Lineas Seleccionadas" type="action" class="btn-primary">
-
-                    </button>
+                    <button name="%(cubicaciones.pagos_wizzard)d" string="Pagar Lineas Seleccionadas" type="action" class="btn-primary"></button>
                 </header>
                 <sheet>
                     <group>
@@ -63,8 +61,8 @@
                 <field name="proveedor"/>
                 <field name="date_start"/>
                 <field name="date_end"/>
-                <field name="partidas"/>
-                <field name="total"/>
+                <field name="partidas" sum="partidas"/>
+                <field name="total" sum="total"/>
             </tree>
         </field>
     </record>

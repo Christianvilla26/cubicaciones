@@ -135,7 +135,7 @@ class pagos_wizzard(models.TransientModel):
     monto = fields.Float('Monto')
     contrato = fields.Many2one('contratos.order', string='Contrato')
     proveedor = fields.Many2one('res.partner', string='Proveedor', domain=[('supplier', '=', True)])
-    insumo = fields.Many2one('contratos.order.line', string='Yipeta')
+    insumo = fields.Many2one('contratos.order.line', string='Insumo 1')
     insumo2 = fields.Many2one('contratos.order.line', string='Insumo 2')
     cubicacion = fields.Many2one('cubicacion.order', string='cubicacion')
     concepto = fields.Char(string='concepto')
@@ -237,7 +237,7 @@ class pagos(models.Model):
     MontoDespuesDeImpuestos = fields.Float('Despues De Impuestos')
 
     # Variable final en la que se hacen todos los calculos de los impuestos
-    RetencionIntercambio = fields.Float('Intercambio Yipeta')
+    RetencionIntercambio = fields.Float('Intercambio Insumo')
     RetencionIntercambio2 = fields.Float('Avance Efectivo')
 
     # Al monto neto le calculamos el porcentaje de la cuota de intercambio y lo guardamos en una variable
