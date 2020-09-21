@@ -45,11 +45,17 @@ class CubicacionOrderLine(models.Model):
 
     partida_subtype_id = fields.Many2one('partida.subtype', string='Subtipo')
     cantidad = fields.Float('Cantidad')
-    contract_line_id = fields.Many2one('contratos.order.line', string='Insumo')
     unit_price = fields.Float('Precio unitario')
     subtotal = fields.Float('Monto Bruto', compute='_compute_total')
     # total = fields.Float('A pagar', compute='_compute_total')
     Pagada = fields.Boolean('Pagada')
+    # Pago = fields.One2many(comodel_name='pagos.order',
+    #                            inverse_name='partidas', string='Partidas')
+    # Pago = fields.One2many('cubicacion.order.line', 'subtotal')
+    contract_line_id = fields.Many2one('contratos.order.line', string='Insumo')
+    pago_line_id = fields.Many2one('pagos.order', string='partidas')
+
+
 
     @api.depends('cantidad')
     def _compute_total(self):
@@ -141,7 +147,6 @@ class pagos_wizzard(models.TransientModel):
     concepto = fields.Char(string='concepto')
 
 
-
     @api.model
     def default_get(self, fields):
         result = super(pagos_wizzard, self).default_get(fields)
@@ -199,18 +204,19 @@ class pagos_wizzard(models.TransientModel):
 
 
 
-
-
-
+        # print(self.partidas)
 
         pago_nuevo = pago.create({'concepto': self.concepto, 'proveedor': self.proveedor.id,
                      # 'contract_line_id': self.insumo.id,
                      'contract_line_id2': self.insumo2.id,'Monto': self.monto,
                      'Impuesto1': Impuesto1,'Impuesto2': Impuesto2, 'MontoDespuesDeImpuestos': MontosDespuesDeImpuestos,
-                     'RetencionIntercambio': Intercambio,'RetencionIntercambio2': Intercambio2, 'MontoDefinitivo': MontoDef})
+                     'RetencionIntercambio': Intercambio,'RetencionIntercambio2': Intercambio2, 'MontoDefinitivo': MontoDef,
+                                 })
+        #  'partidas': self.partidas.cubicacion_order_id
         for line in self.cubicacion.partidas:
             if(line.seleccion and not line.Pagada):
                 line.Pagada = True
+                line.pago_line_id = pago_nuevo.id
         for line in self.contrato.contrato_lines:
             line.pago_id = pago_nuevo.id
 
@@ -228,6 +234,10 @@ class pagos(models.Model):
     contract_line_id2 = fields.Many2one('contratos.order.line', string='Insumo2')
     # La sumatoria de todas las lineas que seleccione en las cubicaciones
     Monto = fields.Float('Monto')
+
+    partidas = fields.One2many('cubicacion.order.line', 'pago_line_id', string='partidas')
+
+    # partidas = fields.Many2one(comodel_name='cubicacion.order.line')
 
     # Al monto que recibimos arriba le sacamos las deducciones de ley
     Impuesto1 = fields.Float('ISR', compute='_compute_taxes')
