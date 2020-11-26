@@ -39,12 +39,17 @@
 <!--            <h2 t-if="o.state in ['sent', 'to approve']">Cubicación #<span t-field="o.name"/></h2>-->
 
             <div>
+                <strong>Codigo:</strong>
+                <div t-field="o.id" class="col-3 bm-2"></div>
                 <strong>Concepto:</strong>
                 <div t-field="o.concepto" class="col-3 bm-2"></div>
                 <strong>Proveedor:</strong>
                 <div t-field="o.proveedor" class="col-3 bm-2"></div>
-                 <strong>RNC:</strong>
-                <div t-field="o.proveedor.vat" class="col-3 bm-2"></div>
+                <div t-if="o.proveedor.vat">
+                     <strong>RNC o Cedula:</strong>
+                    <div t-field="o.proveedor.vat" class="col-3 bm-2"></div>
+                </div>
+
             </div>
 
             <table class="table table-sm o_main_table">
