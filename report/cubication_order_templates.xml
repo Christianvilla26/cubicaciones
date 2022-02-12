@@ -38,21 +38,66 @@
 <!--            <h2 t-if="o.state == 'draft'">Reporte de pago #<span t-field="o.name"/></h2>-->
 <!--            <h2 t-if="o.state in ['sent', 'to approve']">Cubicación #<span t-field="o.name"/></h2>-->
 
-            <div>
-                <strong>Codigo:</strong>
-                <div t-field="o.id" class="col-3 bm-2"></div>
-                <strong>Concepto:</strong>
-                <div t-field="o.concepto" class="col-3 bm-2"></div>
-                <strong>Proveedor:</strong>
+
+
+
+            <div class="container">
+  <div class="row row-cols-2">
+    <div class="col">
+        <div class="row" style="margin: 5px 0px;">
+              <strong>Concepto:</strong>
+                <div t-field="o.concepto" class="col-3 bm-2" style="
+    text-transform: capitalize;
+"></div>
+        </div>
+          <div class="row" style="margin: 5px 0px;">
+                    <strong>Proveedor:</strong>
                 <div t-field="o.proveedor" class="col-3 bm-2"></div>
-                <div t-if="o.proveedor.vat">
+        </div>
+        <div class="row" style="margin: 5px 0px;">
+             <div t-if="o.proveedor.vat">
                      <strong>RNC o Cedula:</strong>
                     <div t-field="o.proveedor.vat" class="col-3 bm-2"></div>
                 </div>
+        </div>
+    </div>
+        <div class="col">
+        <div class="row" style="margin: 5px 0px;">
+            <strong>Fecha:</strong>
+            <div t-field="o.partidas.cubicacion_order_id.date_start" class="col-3 bm-2"></div>
+        </div>
+          <div class="row" style="margin: 5px 0px;">
+              <strong>Codigo:</strong>
+              <div t-field="o.id" class="col-3 bm-2"></div>
+        </div>
+    </div>
+  </div>
+</div>
+            <p style="
+    width: 100%;
+    height: 0px;
+    border: 0.3px solid #e9ecef;
+">
 
-            </div>
+</p>
+<!--            <div>-->
+<!--                <strong>Fecha:</strong>-->
+<!--                <div t-field="o.partidas.cubicacion_order_id.date_start" class="col-3 bm-2"></div>-->
+<!--                <strong>Codigo:</strong>-->
+<!--                <div t-field="o.id" class="col-3 bm-2"></div>-->
+<!--                <strong>Concepto:</strong>-->
+<!--                <div t-field="o.concepto" class="col-3 bm-2"></div>-->
+<!--                <strong>Proveedor:</strong>-->
+<!--                <div t-field="o.proveedor" class="col-3 bm-2"></div>-->
+<!--                <div t-if="o.proveedor.vat">-->
+<!--                     <strong>RNC o Cedula:</strong>-->
+<!--                    <div t-field="o.proveedor.vat" class="col-3 bm-2"></div>-->
+<!--                </div>-->
 
-            <table class="table table-sm o_main_table">
+<!--            </div>-->
+
+            <div style="margin: 20px 0px">
+                  <table class="table table-sm o_main_table">
 
                 <thead class="thead-light">
                     <tr>
@@ -97,6 +142,8 @@
                     </tr>
                 </tbody>
             </table>
+            </div>
+
 
             <table class="table table-sm o_main_table">
   <thead>
