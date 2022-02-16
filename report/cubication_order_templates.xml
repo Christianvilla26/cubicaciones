@@ -50,7 +50,7 @@
 </p>
             <div>
                 <div t-if="o.partidas[0].cubicacion_order_id.date_start">
-                    <strong>Fecha:</strong>
+                    <strong>Fecha :</strong>
                     <div t-field="o.partidas[0].cubicacion_order_id.date_start" class="col-3 bm-2"></div>
                 </div>
                 <strong>Codigo:</strong>
