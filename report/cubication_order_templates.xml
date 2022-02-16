@@ -49,8 +49,10 @@
 
 </p>
             <div>
-                <strong>Fecha:</strong>
-                <div t-field="o.partidas.cubicacion_order_id.date_start" class="col-3 bm-2"></div>
+                <div t-if="o.partidas[0].cubicacion_order_id.date_start">
+                    <strong>Fecha:</strong>
+                    <div t-field="o.partidas[0].cubicacion_order_id.date_start" class="col-3 bm-2"></div>
+                </div>
                 <strong>Codigo:</strong>
                 <div t-field="o.id" class="col-3 bm-2"></div>
                 <strong>Concepto:</strong>
