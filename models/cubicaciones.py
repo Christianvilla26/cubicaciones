@@ -21,6 +21,11 @@ class CubicacionOrder(models.Model):
     proveedor = fields.Many2one('res.partner', string='Proveedor', domain=[('supplier', '=', True)])
     partidas = fields.One2many(comodel_name='cubicacion.order.line',
                                inverse_name='cubicacion_order_id', string='Partidas')
+    pagada = fields.Boolean('Pagada', compute='_compute_pagada', store=True)
+    @api.depends('cubicaciones.Pagada')
+    def _compute_pagada(self):
+        for rec in self:
+            rec.pagada = all(line.Pagada for line in rec.cubicaciones)
 
 
 
