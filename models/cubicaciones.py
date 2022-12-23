@@ -8,6 +8,7 @@ from odoo.exceptions import ValidationError
 class CubicacionOrder(models.Model):
     _name = 'cubicacion.order'
     _rec_name = 'name'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     name = fields.Char('Nombre', required=True)
     company_id = fields.Many2one('res.company', string='Compañía',
