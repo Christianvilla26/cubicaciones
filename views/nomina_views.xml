@@ -42,11 +42,12 @@
         <field name="model">nomina.order</field>
         <field name="arch" type="xml">
             <tree string="nomina Tree">
+                <field name="id"/>
                 <field name="name"/>
+                <field name="company_id"/>
                 <field name="date_start"/>
                 <field name="cubicaciones"/>
-                <field name="Monto"/>
-            </tree>
+                <field name="Monto" sum="Monto"/>
         </field>
     </record>
 

@@ -181,7 +181,7 @@ class pagos_wizzard(models.TransientModel):
             Impuesto1 = self.monto * 0.02
             Impuesto2 = self.monto * 0.0161
         MontosDespuesDeImpuestos = self.monto - (Impuesto1 + Impuesto2)
-
+        company_id = self.env.user.company_id.id
         Intercambio = 0
 
         if self.insumo:
@@ -214,6 +214,7 @@ class pagos_wizzard(models.TransientModel):
 
         pago_nuevo = pago.create({'concepto': self.concepto, 'proveedor': self.proveedor.id,
                                   # 'contract_line_id': self.insumo.id,
+                                  'company_id': self.env.user.company_id.id,
                                   'contract_line_id2': self.insumo2.id, 'Monto': self.monto,
                                   'Impuesto1': Impuesto1, 'Impuesto2': Impuesto2, 'MontoDespuesDeImpuestos': MontosDespuesDeImpuestos,
                                   'RetencionIntercambio': Intercambio, 'RetencionIntercambio2': Intercambio2, 'MontoDefinitivo': MontoDef,
@@ -233,6 +234,8 @@ class pagos(models.Model):
     concepto = fields.Char('Concepto', required=True)
     proveedor = fields.Many2one('res.partner', string='Proveedor', domain=[
                                 ('supplier', '=', True)])
+    company_id = fields.Many2one('res.company', string='Compañía',
+                                 default=lambda self: self.env.user.company_id.id)
     # contract_line_id = fields.Many2one('contratos.order.line', string='Insumo')
     contract_line_id = fields.One2many(
         'contratos.order.line', 'pago_id', string='Insumo')

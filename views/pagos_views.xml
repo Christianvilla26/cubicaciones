@@ -33,10 +33,11 @@
         <field name="model">pagos.order</field>
         <field name="arch" type="xml">
             <tree string="Pagos Tree">
+                <field name="id"/>
                 <field name="concepto"/>
                 <field name="Monto"/>
-                <field name="MontoDespuesDeImpuestos"/>
-                <field name="MontoDefinitivo"/>
+                <field name="MontoDespuesDeImpuestos" sum="MontoDespuesDeImpuestos"/>
+                <field name="MontoDefinitivo" sum="MontoDefinitivo"/>
             </tree>
         </field>
     </record>
