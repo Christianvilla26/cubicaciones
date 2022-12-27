@@ -48,6 +48,7 @@
                 <field name="date_start"/>
                 <field name="cubicaciones"/>
                 <field name="Monto" sum="Monto"/>
+            </tree>
         </field>
     </record>
 
