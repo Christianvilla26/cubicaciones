@@ -230,6 +230,7 @@ class pagos_wizzard(models.TransientModel):
 
 class pagos(models.Model):
     _name = 'pagos.order'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     concepto = fields.Char('Concepto', required=True)
     proveedor = fields.Many2one('res.partner', string='Proveedor', domain=[
