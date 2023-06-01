@@ -19,8 +19,9 @@ class CubicacionOrder(models.Model):
     total = fields.Float('Total Cubicado', compute='_compute_total')
     aprobada = fields.Boolean('Aprobada')
     nomina = fields.Many2one('nomina.order', string='Nomina')
-    proveedor = fields.Many2one('res.partner', string='Proveedor', domain=[
-                                ('supplier', '=', True)])
+    # proveedor = fields.Many2one('res.partner', string='Proveedor', domain=[
+    #                             ('supplier', '=', True)])
+    proveedor = fields.Many2one('res.partner', string='Proveedor')
     partidas = fields.One2many(comodel_name='cubicacion.order.line',
                                inverse_name='cubicacion_order_id', string='Partidas')
     pagada = fields.Boolean('Pagada', compute='_compute_pagada', store=True)
