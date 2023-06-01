@@ -6,32 +6,38 @@ from odoo.exceptions import ValidationError
 
 # Clase que representa las cubicaciones
 class CubicacionOrder(models.Model):
-    _name = 'cubicacion.order'
-    _rec_name = 'name'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _name = "cubicacion.order"
+    _rec_name = "name"
+    _inherit = ["mail.thread", "mail.activity.mixin"]
 
-    name = fields.Char('Nombre', required=True)
-    company_id = fields.Many2one('res.company', string='Compañía',
-                                 default=lambda self: self.env.user.company_id.id)
-    date_start = fields.Date('Fecha inicio', required=True)
-    date_end = fields.Date('Fecha fin')
-    contract_id = fields.Many2one('contratos.order', string='Contrato')
-    total = fields.Float('Total Cubicado', compute='_compute_total')
-    aprobada = fields.Boolean('Aprobada')
-    nomina = fields.Many2one('nomina.order', string='Nomina')
+    name = fields.Char("Nombre", required=True)
+    company_id = fields.Many2one(
+        "res.company",
+        string="Compañía",
+        default=lambda self: self.env.user.company_id.id,
+    )
+    date_start = fields.Date("Fecha inicio", required=True)
+    date_end = fields.Date("Fecha fin")
+    contract_id = fields.Many2one("contratos.order", string="Contrato")
+    total = fields.Float("Total Cubicado", compute="_compute_total")
+    aprobada = fields.Boolean("Aprobada")
+    nomina = fields.Many2one("nomina.order", string="Nomina")
     # proveedor = fields.Many2one('res.partner', string='Proveedor', domain=[
     #                             ('supplier', '=', True)])
-    proveedor = fields.Many2one('res.partner', string='Proveedor')
-    partidas = fields.One2many(comodel_name='cubicacion.order.line',
-                               inverse_name='cubicacion_order_id', string='Partidas')
-    pagada = fields.Boolean('Pagada', compute='_compute_pagada', store=True)
+    proveedor = fields.Many2one("res.partner", string="Proveedor")
+    partidas = fields.One2many(
+        comodel_name="cubicacion.order.line",
+        inverse_name="cubicacion_order_id",
+        string="Partidas",
+    )
+    pagada = fields.Boolean("Pagada", compute="_compute_pagada", store=True)
 
-    @api.depends('partidas.Pagada')
+    @api.depends("partidas.Pagada")
     def _compute_pagada(self):
         for rec in self:
             rec.pagada = all(line.Pagada for line in rec.partidas)
 
-    @api.depends('partidas.subtotal')
+    @api.depends("partidas.subtotal")
     def _compute_total(self):
         for rec in self:
             rec.total = sum(line.subtotal for line in rec.partidas)
@@ -39,35 +45,48 @@ class CubicacionOrder(models.Model):
 
 # Clase que representa las partidas
 class CubicacionOrderLine(models.Model):
-    _name = 'cubicacion.order.line'
+    _name = "cubicacion.order.line"
 
     # _sql_constraints = [('seleccion','check(seleccion = false and pagada = true)','Ya esta linea fue pagada')]
 
-    cubicacion_order_id = fields.Many2one('cubicacion.order', )
-    seleccion = fields.Boolean('')
-    name = fields.Char('Concepto', required=True)
-    partida_type = fields.Selection([('suministro', 'Suministro'),
-                                     ('m/o', 'M/O'), ('todo_costo', 'Todo costo')],
-                                    string='Tipo', required=True)
+    cubicacion_order_id = fields.Many2one(
+        "cubicacion.order",
+    )
+    seleccion = fields.Boolean("")
+    name = fields.Char("Concepto", required=True)
+    partida_type = fields.Selection(
+        [("suministro", "Suministro"), ("m/o", "M/O"), ("todo_costo", "Todo costo")],
+        string="Tipo",
+        required=True,
+    )
 
-    partida_subtype_id = fields.Many2one('partida.subtype', string='Subtipo')
-    cantidad = fields.Float('Cantidad')
-    unit_price = fields.Float('Precio unitario')
-    subtotal = fields.Float('Monto Bruto', compute='_compute_total')
+    partida_subtype_id = fields.Many2one("partida.subtype", string="Subtipo")
+    cantidad = fields.Float("Cantidad")
+    unit_price = fields.Float("Precio unitario")
+    subtotal = fields.Float("Monto Bruto", compute="_compute_total")
     # total = fields.Float('A pagar', compute='_compute_total')
-    Pagada = fields.Boolean('Pagada')
+    Pagada = fields.Boolean("Pagada")
     # Pago = fields.One2many(comodel_name='pagos.order',
     #                            inverse_name='partidas', string='Partidas')
     # Pago = fields.One2many('cubicacion.order.line', 'subtotal')
-    contract_line_id = fields.Many2one('contratos.order.line', string='Insumo')
-    pago_line_id = fields.Many2one('pagos.order', string='partidas')
+    descontar = fields.Boolean("Descontar")
+    monto_descontar = fields.Float("Monto a descontar")
+    contract_line_id = fields.Many2one("contratos.order.line", string="Insumo")
+    pago_line_id = fields.Many2one("pagos.order", string="partidas")
 
-    @api.depends('cantidad')
+    @api.depends("cantidad")
     def _compute_total(self):
         for rec in self:
             rec.subtotal = rec.cantidad * rec.unit_price
 
-    @api.depends('cantidad', 'subtotal')
+    @api.onchange("descontar")
+    def _onchange_descontar(self):
+        if self.descontar:
+            self.monto_descontar = self.subtotal * 0.05
+        else:
+            self.monto_descontar = 0.00
+
+    @api.depends("cantidad", "subtotal")
     def _compute_taxes(self):
         for rec in self:
             if rec.cubicacion_order_id.proveedor.company_type == "person":
@@ -94,88 +113,107 @@ class CubicacionOrderLine(models.Model):
 
 
 class PartidaSubtipo(models.Model):
-    _name = 'partida.subtype'
+    _name = "partida.subtype"
 
-    name = fields.Char('Nombre', required=True)
+    name = fields.Char("Nombre", required=True)
 
 
 class nomina(models.Model):
-    _name = 'nomina.order'
+    _name = "nomina.order"
 
-    name = fields.Char('Nombre', required=True)
-    company_id = fields.Many2one('res.company', string='Compañía',
-                                 default=lambda self: self.env.user.company_id.id)
+    name = fields.Char("Nombre", required=True)
+    company_id = fields.Many2one(
+        "res.company",
+        string="Compañía",
+        default=lambda self: self.env.user.company_id.id,
+    )
     # supplier_id = fields.Many2one('res.partner', string='Proveedor', domain=[('supplier', '=', True)])
 
-    date_start = fields.Date('Fecha inicio', required=True)
-    date_end = fields.Date('Fecha fin')
-    Monto = fields.Float('Total', compute='_compute_total')
+    date_start = fields.Date("Fecha inicio", required=True)
+    date_end = fields.Date("Fecha fin")
+    Monto = fields.Float("Total", compute="_compute_total")
 
-    cubicaciones = fields.One2many(comodel_name='cubicacion.order',
-                                   inverse_name='nomina', string='Cubicaciones')
+    cubicaciones = fields.One2many(
+        comodel_name="cubicacion.order", inverse_name="nomina", string="Cubicaciones"
+    )
 
-    @api.depends('cubicaciones.total')
+    @api.depends("cubicaciones.total")
     def _compute_total(self):
         for rec in self:
             rec.Monto = sum(line.total for line in rec.cubicaciones)
 
 
 class contrato(models.Model):
-    _name = 'contratos.order'
+    _name = "contratos.order"
 
-    name = fields.Char('Nombre', required=True)
-    company_id = fields.Many2one('res.company', string='Compañía',
-                                 default=lambda self: self.env.user.company_id.id)
-    date_start = fields.Date('Fecha inicio', required=True)
-    date_end = fields.Date('Fecha fin')
-    monto_contrato = fields.Float('Monto contrato')
-    monto_faltante = fields.Float(
-        'Monto Faltante', compute='_compute_monto_faltante')
+    name = fields.Char("Nombre", required=True)
+    company_id = fields.Many2one(
+        "res.company",
+        string="Compañía",
+        default=lambda self: self.env.user.company_id.id,
+    )
+    date_start = fields.Date("Fecha inicio", required=True)
+    date_end = fields.Date("Fecha fin")
+    monto_contrato = fields.Float("Monto contrato")
+    monto_faltante = fields.Float("Monto Faltante", compute="_compute_monto_faltante")
     state = fields.Selection(
-        [('no_paid', 'No pagado'), ('paid', 'Pagado')], string='Estatus')
-    Contratista = fields.Many2one('res.partner', string='Proveedor', domain=[
-                                  ('supplier', '=', True)])
-    contrato_lines = fields.One2many('contratos.order.line', inverse_name='contrato_id',
-                                     string='Líneas de contrato')
+        [("no_paid", "No pagado"), ("paid", "Pagado")], string="Estatus"
+    )
+    Contratista = fields.Many2one(
+        "res.partner", string="Proveedor", domain=[("supplier", "=", True)]
+    )
+    contrato_lines = fields.One2many(
+        "contratos.order.line", inverse_name="contrato_id", string="Líneas de contrato"
+    )
+    saldo_total = fields.Float("Saldo total", compute="_compute_saldo_total")
+    porcentaje_descuento = fields.Float("Porcentaje de descuento")
 
-    @api.depends('monto_contrato', 'contrato_lines.Monto')
+    @api.depends("monto_contrato", "contrato_lines.Monto")
     def _compute_monto_faltante(self):
         for rec in self:
-            rec.monto_faltante = rec.monto_contrato - \
-                sum(rec.contrato_lines.mapped('Monto'))
+            rec.monto_faltante = rec.monto_contrato - sum(
+                rec.contrato_lines.mapped("Monto")
+            )
+
+    @api.depends("monto_contrato", "contrato_lines.Monto")
+    def _compute_saldo_total(self):
+        for rec in self:
+            rec.saldo_total = sum(rec.contrato_lines.mapped("Monto"))
 
 
 class pagos_wizzard(models.TransientModel):
-    _name = 'pagos.wizzard'
+    _name = "pagos.wizzard"
 
-    monto = fields.Float('Monto')
-    contrato = fields.Many2one('contratos.order', string='Contrato')
-    proveedor = fields.Many2one('res.partner', string='Proveedor', domain=[
-                                ('supplier', '=', True)])
-    insumo = fields.Many2one('contratos.order.line', string='Insumo 1')
-    insumo2 = fields.Many2one('contratos.order.line', string='Insumo 2')
-    cubicacion = fields.Many2one('cubicacion.order', string='cubicacion')
-    concepto = fields.Char(string='concepto')
+    monto = fields.Float("Monto")
+    contrato = fields.Many2one("contratos.order", string="Contrato")
+    proveedor = fields.Many2one(
+        "res.partner", string="Proveedor", domain=[("supplier", "=", True)]
+    )
+    insumo = fields.Many2one("contratos.order.line", string="Insumo 1")
+    insumo2 = fields.Many2one("contratos.order.line", string="Insumo 2")
+    cubicacion = fields.Many2one("cubicacion.order", string="cubicacion")
+    concepto = fields.Char(string="concepto")
 
     @api.model
     def default_get(self, fields):
         result = super(pagos_wizzard, self).default_get(fields)
-        if self._context.get('active_id'):
-            cubicacion = self.env['cubicacion.order'].browse(
-                [self._context.get('active_id')])
+        if self._context.get("active_id"):
+            cubicacion = self.env["cubicacion.order"].browse(
+                [self._context.get("active_id")]
+            )
             monto = 0
             for rec in cubicacion.partidas:
-                if (rec.seleccion and not rec.Pagada):
+                if rec.seleccion and not rec.Pagada:
                     monto = rec.subtotal + monto
-            result['monto'] = monto
-            result['proveedor'] = cubicacion.proveedor.id
-            result['contrato'] = cubicacion.contract_id.id
-            result['cubicacion'] = cubicacion.id
+            result["monto"] = monto
+            result["proveedor"] = cubicacion.proveedor.id
+            result["contrato"] = cubicacion.contract_id.id
+            result["cubicacion"] = cubicacion.id
         return result
 
     @api.multi
     def crearPago(self):
-        pago = self.env['pagos.order']
+        pago = self.env["pagos.order"]
         Impuesto1 = 0
         Impuesto2 = 0
         if self.proveedor.company_type == "person":
@@ -186,7 +224,7 @@ class pagos_wizzard(models.TransientModel):
         Intercambio = 0
 
         if self.insumo:
-            temp = self.insumo.porcentaje/100
+            temp = self.insumo.porcentaje / 100
             Intercambio = temp * MontosDespuesDeImpuestos
             Resta = self.insumo.precio_unitario - self.insumo.adeudado
             print(Resta)
@@ -213,16 +251,25 @@ class pagos_wizzard(models.TransientModel):
 
         # print(self.partidas)
 
-        pago_nuevo = pago.create({'concepto': self.concepto, 'proveedor': self.proveedor.id,
-                                  # 'contract_line_id': self.insumo.id,
-                                  'company_id': self.env.user.company_id.id,
-                                  'contract_line_id2': self.insumo2.id, 'Monto': self.monto,
-                                  'Impuesto1': Impuesto1, 'Impuesto2': Impuesto2, 'MontoDespuesDeImpuestos': MontosDespuesDeImpuestos,
-                                  'RetencionIntercambio': Intercambio, 'RetencionIntercambio2': Intercambio2, 'MontoDefinitivo': MontoDef,
-                                  })
+        pago_nuevo = pago.create(
+            {
+                "concepto": self.concepto,
+                "proveedor": self.proveedor.id,
+                # 'contract_line_id': self.insumo.id,
+                "company_id": self.env.user.company_id.id,
+                "contract_line_id2": self.insumo2.id,
+                "Monto": self.monto,
+                "Impuesto1": Impuesto1,
+                "Impuesto2": Impuesto2,
+                "MontoDespuesDeImpuestos": MontosDespuesDeImpuestos,
+                "RetencionIntercambio": Intercambio,
+                "RetencionIntercambio2": Intercambio2,
+                "MontoDefinitivo": MontoDef,
+            }
+        )
         #  'partidas': self.partidas.cubicacion_order_id
         for line in self.cubicacion.partidas:
-            if (line.seleccion and not line.Pagada):
+            if line.seleccion and not line.Pagada:
                 line.Pagada = True
                 line.pago_line_id = pago_nuevo.id
         for line in self.contrato.contrato_lines:
@@ -230,45 +277,50 @@ class pagos_wizzard(models.TransientModel):
 
 
 class pagos(models.Model):
-    _name = 'pagos.order'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _name = "pagos.order"
+    _inherit = ["mail.thread", "mail.activity.mixin"]
 
-    concepto = fields.Char('Concepto', required=True)
-    proveedor = fields.Many2one('res.partner', string='Proveedor', domain=[
-                                ('supplier', '=', True)])
-    company_id = fields.Many2one('res.company', string='Compañía',
-                                 default=lambda self: self.env.user.company_id.id)
+    concepto = fields.Char("Concepto", required=True)
+    proveedor = fields.Many2one(
+        "res.partner", string="Proveedor", domain=[("supplier", "=", True)]
+    )
+    company_id = fields.Many2one(
+        "res.company",
+        string="Compañía",
+        default=lambda self: self.env.user.company_id.id,
+    )
     # contract_line_id = fields.Many2one('contratos.order.line', string='Insumo')
     contract_line_id = fields.One2many(
-        'contratos.order.line', 'pago_id', string='Insumo')
-    contract_line_id2 = fields.Many2one(
-        'contratos.order.line', string='Insumo2')
+        "contratos.order.line", "pago_id", string="Insumo"
+    )
+    contract_line_id2 = fields.Many2one("contratos.order.line", string="Insumo2")
     # La sumatoria de todas las lineas que seleccione en las cubicaciones
-    Monto = fields.Float('Monto')
+    Monto = fields.Float("Monto")
 
     partidas = fields.One2many(
-        'cubicacion.order.line', 'pago_line_id', string='partidas')
+        "cubicacion.order.line", "pago_line_id", string="partidas"
+    )
 
     # partidas = fields.Many2one(comodel_name='cubicacion.order.line')
 
     # Al monto que recibimos arriba le sacamos las deducciones de ley
-    Impuesto1 = fields.Float('ISR', compute='_compute_taxes')
-    Impuesto2 = fields.Float('AS', compute='_compute_taxes')
+    Impuesto1 = fields.Float("ISR", compute="_compute_taxes")
+    Impuesto2 = fields.Float("AS", compute="_compute_taxes")
 
     # Guardamos en una variable lo que queda despues de hacer todas las deducciones de los impuestos
-    MontoDespuesDeImpuestos = fields.Float('Despues De Impuestos')
+    MontoDespuesDeImpuestos = fields.Float("Despues De Impuestos")
 
     # Variable final en la que se hacen todos los calculos de los impuestos
-    RetencionIntercambio = fields.Float('Intercambio Insumo')
-    RetencionIntercambio2 = fields.Float('Avance Efectivo')
+    RetencionIntercambio = fields.Float("Intercambio Insumo")
+    RetencionIntercambio2 = fields.Float("Avance Efectivo")
 
     # Al monto neto le calculamos el porcentaje de la cuota de intercambio y lo guardamos en una variable
-    MontoDefinitivo = fields.Float('Al proveedor')
+    MontoDefinitivo = fields.Float("Al proveedor")
 
     # Aqui hacemos el calculo de cada una de las variables
 
     # Calculo de impuestos
-    @api.depends('Monto')
+    @api.depends("Monto")
     def _compute_taxes(self):
         for rec in self:
             if rec.proveedor.company_type == "person":
@@ -289,39 +341,46 @@ class pagos(models.Model):
 
 
 class linea_contrato(models.Model):
-    _name = 'contratos.order.line'
+    _name = "contratos.order.line"
 
-    name = fields.Char('Nombre', required=True)
-    Tipo = fields.Selection([('avance', 'Avance Efectivo'),
-                             ('intercambio', 'Intercambio')], string='Tipo', required=True)
-    avance = fields.Float('Avance')
+    name = fields.Char("Nombre", required=True)
+    Tipo = fields.Selection(
+        [("avance", "Avance Efectivo"), ("intercambio", "Intercambio")],
+        string="Tipo",
+        required=True,
+    )
+    avance = fields.Float("Avance")
 
     cubicaciones_lines_ids = fields.One2many(
-        'cubicacion.order.line', 'contract_line_id')
-    porcentaje = fields.Float('Porcentaje')
-    Producto = fields.Many2one('product.product')
-    precio_unitario = fields.Float('Precio unitario', compute='_compute_total')
-    adeudado = fields.Float('Pagado', compute='compute_adeudado')
+        "cubicacion.order.line", "contract_line_id"
+    )
+    porcentaje = fields.Float("Porcentaje")
+    Producto = fields.Many2one("product.product")
+    precio_unitario = fields.Float("Precio unitario", compute="_compute_total")
+    adeudado = fields.Float("Pagado", compute="compute_adeudado")
 
-    pago_id = fields.Many2one('pagos.order', string='Pago')
+    pago_id = fields.Many2one("pagos.order", string="Pago")
 
-    Monto = fields.Float('Monto', compute='_compute_total')
-    contrato_id = fields.Many2one('contratos.order', 'Contrato')
+    Monto = fields.Float("Monto", compute="_compute_total")
+    contrato_id = fields.Many2one("contratos.order", "Contrato")
 
-    @api.depends('pago_id', 'Tipo', 'pago_id.RetencionIntercambio2', 'pago_id.RetencionIntercambio')
+    @api.depends(
+        "pago_id",
+        "Tipo",
+        "pago_id.RetencionIntercambio2",
+        "pago_id.RetencionIntercambio",
+    )
     def compute_adeudado(self):
         for rec in self:
             # temp = 0
-            if rec.Tipo == 'intercambio':
-                print('intercambio', rec.pago_id)
-                print(rec.pago_id.mapped('RetencionIntercambio'))
-                rec.adeudado = sum(
-                    [pago.RetencionIntercambio for pago in rec.pago_id])
+            if rec.Tipo == "intercambio":
+                print("intercambio", rec.pago_id)
+                print(rec.pago_id.mapped("RetencionIntercambio"))
+                rec.adeudado = sum([pago.RetencionIntercambio for pago in rec.pago_id])
             else:
-                print('avance', rec.pago_id)
-                print(rec.pago_id.mapped('RetencionIntercambio2'))
-                rec.adeudado = sum(
-                    [pago.RetencionIntercambio2 for pago in rec.pago_id])
+                print("avance", rec.pago_id)
+                print(rec.pago_id.mapped("RetencionIntercambio2"))
+                rec.adeudado = sum([pago.RetencionIntercambio2 for pago in rec.pago_id])
             # for pago in rec.pagos_ids:
             #    if rec.Tipo == 'intercambio':
             #        rec.adeudado += pago.RetencionIntercambio
@@ -332,13 +391,13 @@ class linea_contrato(models.Model):
 
             rec.adeudado
 
-    @api.depends('Tipo', 'avance', 'Producto', 'porcentaje')
+    @api.depends("Tipo", "avance", "Producto", "porcentaje")
     def _compute_total(self):
         for rec in self:
-            if rec.Tipo == 'avance':
+            if rec.Tipo == "avance":
                 rec.Monto = rec.avance
                 rec.precio_unitario = rec.avance
 
-            if rec.Tipo == 'intercambio':
+            if rec.Tipo == "intercambio":
                 rec.precio_unitario = rec.Producto.list_price or 0.0
                 rec.Monto = rec.Producto.list_price

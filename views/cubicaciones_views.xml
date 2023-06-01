@@ -20,7 +20,6 @@
                         <group>
                             <field name="date_start"/>
                             <field name="date_end"/>
-
                             <field name="total"/>
                         </group>
                     </group>
@@ -35,6 +34,8 @@
                                     <field name="partida_subtype_id"/>
                                     <field name="cantidad"/>
                                     <field name="unit_price"/>
+                                    <field name="descontar" class="center_checkbox"/>
+                                    <field name="monto_descontar"/>
                                     <field name="subtotal"/>
                                     <field name="Pagada" readonly="1"/>
                                 </tree>
