@@ -34,9 +34,10 @@
                                     <field name="partida_subtype_id"/>
                                     <field name="cantidad"/>
                                     <field name="unit_price"/>
-                                    <field name="descontar" class="center_checkbox"/>
-                                    <field name="monto_descontar"/>
                                     <field name="subtotal"/>
+                                    <field name="descontar" class="center_checkbox"/>
+                                    <field name="monto_descontar" readonly="1"/>
+                                    <field name="monto_neto"/>
                                     <field name="Pagada" readonly="1"/>
                                 </tree>
                             </field>

@@ -73,6 +73,12 @@ class CubicacionOrderLine(models.Model):
     monto_descontar = fields.Float("Monto a descontar")
     contract_line_id = fields.Many2one("contratos.order.line", string="Insumo")
     pago_line_id = fields.Many2one("pagos.order", string="partidas")
+    monto_neto = fields.Float("Monto Neto", compute="_compute_monto_neto")
+
+    @api.depends("subtotal", "monto_descontar")
+    def _compute_monto_neto(self):
+        for rec in self:
+            rec.monto_neto = rec.subtotal - rec.monto_descontar
 
     @api.depends("cantidad")
     def _compute_total(self):
@@ -82,7 +88,9 @@ class CubicacionOrderLine(models.Model):
     @api.onchange("descontar")
     def _onchange_descontar(self):
         if self.descontar:
-            self.monto_descontar = self.subtotal * 0.05
+            self.monto_descontar = self.subtotal * (
+                self.cubicacion_order_id.contract_id.porcentaje_descuento * 0.01
+            )
         else:
             self.monto_descontar = 0.00
 
