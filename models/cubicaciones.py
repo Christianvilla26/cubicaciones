@@ -213,7 +213,7 @@ class pagos_wizzard(models.TransientModel):
             monto = 0
             for rec in cubicacion.partidas:
                 if rec.seleccion and not rec.Pagada:
-                    monto = rec.subtotal + monto
+                    monto = rec.monto_neto + monto
             result["monto"] = monto
             result["proveedor"] = cubicacion.proveedor.id
             result["contrato"] = cubicacion.contract_id.id
