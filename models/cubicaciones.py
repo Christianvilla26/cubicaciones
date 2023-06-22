@@ -357,6 +357,9 @@ class pagos(models.Model):
     # Al monto neto le calculamos el porcentaje de la cuota de intercambio y lo guardamos en una variable
     MontoDefinitivo = fields.Float("Al proveedor")
 
+    # Campo para decir si esta facturada o no
+    Facturada = fields.Boolean("Facturada", default=False)
+
     # Aqui hacemos el calculo de cada una de las variables
 
     # Calculo de impuestos

@@ -1,10 +1,10 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_cubicacion_order,access_cubicacion_order,model_cubicacion_order,mrp.group_mrp_manager,1,1,1,1
-access_cubicacion_order_line,access_cubicacion_order_line,model_cubicacion_order_line,mrp.group_mrp_manager,1,1,1,1
-access_partida_subtype,access_partida_subtype,model_partida_subtype,mrp.group_mrp_manager,1,1,1,1
+access_cubicacion_order,access_cubicacion_order,model_cubicacion_order,mrp.group_mrp_manager,1,1,1,0
+access_cubicacion_order_line,access_cubicacion_order_line,model_cubicacion_order_line,mrp.group_mrp_manager,1,1,1,0
+access_partida_subtype,access_partida_subtype,model_partida_subtype,mrp.group_mrp_manager,1,1,1,0
 
 
-access_contrato_order,access_contrato_order,model_contratos_order,mrp.group_mrp_manager,1,1,1,1
-access_contrato_order_line,access_contrato_order_line,model_contratos_order_line,mrp.group_mrp_manager,1,1,1,1
-access_nomina_order,access_nomina_order,model_nomina_order,mrp.group_mrp_manager,1,1,1,1
-access_pagos_order,access_pagos_order,model_pagos_order,mrp.group_mrp_manager,1,1,1,1
+access_contrato_order,access_contrato_order,model_contratos_order,mrp.group_mrp_manager,1,1,1,0
+access_contrato_order_line,access_contrato_order_line,model_contratos_order_line,mrp.group_mrp_manager,1,1,1,0
+access_nomina_order,access_nomina_order,model_nomina_order,mrp.group_mrp_manager,1,1,1,0
+access_pagos_order,access_pagos_order,model_pagos_order,mrp.group_mrp_manager,1,1,1,0

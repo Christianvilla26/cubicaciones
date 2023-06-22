@@ -17,8 +17,7 @@
                         <group>
                             <field name="Monto"/>
                             <field name="MontoDespuesDeImpuestos"/>
-                            <field name="RetencionIntercambio"/>
-                            <field name="RetencionIntercambio2"/>
+                            <field name="Facturada"/>
                             <field name="MontoDefinitivo"/>
                             <field name="partidas"/>
                         </group>
