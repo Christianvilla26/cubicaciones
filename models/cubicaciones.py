@@ -89,9 +89,19 @@ class CubicacionOrderLine(models.Model):
     @api.onchange("descontar")
     def _onchange_descontar(self):
         if self.descontar:
-            self.monto_descontar = self.subtotal * (
+            montoADescontar = self.subtotal * (
                 self.cubicacion_order_id.contract_id.porcentaje_descuento * 0.01
             )
+            montoMaximoAPagar = (
+                self.cubicacion_order_id.contract_id.saldo_total
+                - self.cubicacion_order_id.contract_id.total_pagado
+            )
+            if montoADescontar <= montoMaximoAPagar:
+                self.monto_descontar = self.subtotal * (
+                    self.cubicacion_order_id.contract_id.porcentaje_descuento * 0.01
+                )
+            else:
+                self.monto_descontar = montoMaximoAPagar
         else:
             self.monto_descontar = 0.00
 
@@ -161,6 +171,9 @@ class contrato(models.Model):
         string="Compañía",
         default=lambda self: self.env.user.company_id.id,
     )
+    partidas = fields.Many2many(
+        "cubicacion.order.line", string="Partidas", compute="_compute_partidas"
+    )
     date_start = fields.Date("Fecha inicio", required=True)
     date_end = fields.Date("Fecha fin")
     monto_contrato = fields.Float("Monto contrato")
@@ -176,6 +189,9 @@ class contrato(models.Model):
     )
     saldo_total = fields.Float("Saldo total", compute="_compute_saldo_total")
     porcentaje_descuento = fields.Float("Porcentaje de descuento")
+    total_pagado = fields.Float(
+        "Total pagado", compute="_compute_total_pagado", store=True
+    )
 
     @api.depends("monto_contrato", "contrato_lines.Monto")
     def _compute_monto_faltante(self):
@@ -188,6 +204,21 @@ class contrato(models.Model):
     def _compute_saldo_total(self):
         for rec in self:
             rec.saldo_total = sum(rec.contrato_lines.mapped("Monto"))
+
+    @api.depends("name")
+    def _compute_partidas(self):
+        for rec in self:
+            rec.partidas = rec.env["cubicacion.order.line"].search(
+                [
+                    ("cubicacion_order_id.contract_id", "=", rec.id),
+                    ("Pagada", "=", True),
+                ]
+            )
+
+    @api.depends("partidas")
+    def _compute_total_pagado(self):
+        for rec in self:
+            rec.total_pagado = sum(rec.partidas.mapped("monto_descontar"))
 
 
 class pagos_wizzard(models.TransientModel):

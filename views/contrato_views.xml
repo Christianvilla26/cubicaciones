@@ -14,6 +14,7 @@
                             <field name="date_start"/>
                             <field name="saldo_total"/> 
                             <field name="porcentaje_descuento"/> 
+                            <field name="total_pagado"/>
                         </group>
                     </group>
                     <notebook>
@@ -30,6 +31,14 @@
                                         <field name="adeudado"/>
                                         <field name="cubicaciones_lines_ids"/>
                                         <field name="Monto"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="partidas">
+                                <field name="partidas">
+                                    <tree string="Partidas Tree"  delete="false">
+                                        <field name="name"/>
+                                        <field name="monto_descontar"/>
                                     </tree>
                                 </field>
                             </page>
