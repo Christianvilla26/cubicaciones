@@ -10,7 +10,7 @@
                         <group>
                             <field name="monto" readonly="1"/>
                             <field name="proveedor" readonly="1"/>
-                            <field name="concepto"/>
+                            <!-- <field name="concepto"/> -->
                         </group>
                         <group>
                             <field name="cubicacion" readonly="1"/>

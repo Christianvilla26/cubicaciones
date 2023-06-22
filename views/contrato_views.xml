@@ -25,11 +25,6 @@
                                         <field name="name"/>
                                         <field name="Tipo"/>
                                         <field name="avance" attrs="{'readonly': [('Tipo', '!=', 'avance')]}"/>
-                                        <field name="Producto" attrs="{'readonly': [('Tipo', '!=', 'intercambio')]}" domain="[('sale_ok', '=', True)]"/>
-                                        <field name="precio_unitario"/>
-                                        <field name="porcentaje"/>
-                                        <field name="adeudado"/>
-                                        <field name="cubicaciones_lines_ids"/>
                                         <field name="Monto"/>
                                     </tree>
                                 </field>
@@ -37,8 +32,9 @@
                             <page string="partidas">
                                 <field name="partidas">
                                     <tree string="Partidas Tree"  delete="false">
+                                        <field name="cubicacion_order_id"/>
                                         <field name="name"/>
-                                        <field name="monto_descontar"/>
+                                        <field name="monto_descontar" sum="monto_descontar"/>
                                     </tree>
                                 </field>
                             </page>

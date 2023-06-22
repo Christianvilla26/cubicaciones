@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api
+from datetime import date
 
 # from odoo.exceptions import ValidationError
 
@@ -189,9 +190,7 @@ class contrato(models.Model):
     )
     saldo_total = fields.Float("Saldo total", compute="_compute_saldo_total")
     porcentaje_descuento = fields.Float("Porcentaje de descuento")
-    total_pagado = fields.Float(
-        "Total pagado", compute="_compute_total_pagado", store=True
-    )
+    total_pagado = fields.Float("Total pagado", compute="_compute_total_pagado")
 
     @api.depends("monto_contrato", "contrato_lines.Monto")
     def _compute_monto_faltante(self):
@@ -215,7 +214,7 @@ class contrato(models.Model):
                 ]
             )
 
-    @api.depends("partidas")
+    @api.depends("partidas", "name")
     def _compute_total_pagado(self):
         for rec in self:
             rec.total_pagado = sum(rec.partidas.mapped("monto_descontar"))
@@ -254,6 +253,7 @@ class pagos_wizzard(models.TransientModel):
     @api.multi
     def crearPago(self):
         pago = self.env["pagos.order"]
+        today = date.today()
         Impuesto1 = 0
         Impuesto2 = 0
         if self.proveedor.company_type == "person":
@@ -293,7 +293,11 @@ class pagos_wizzard(models.TransientModel):
 
         pago_nuevo = pago.create(
             {
-                "concepto": self.concepto,
+                "concepto": "pago"
+                + " "
+                + self.cubicacion.name
+                + " "
+                + today.strftime("%d/%m/%Y"),
                 "proveedor": self.proveedor.id,
                 # 'contract_line_id': self.insumo.id,
                 "company_id": self.env.user.company_id.id,
@@ -388,7 +392,7 @@ class linea_contrato(models.Model):
 
     name = fields.Char("Nombre", required=True)
     Tipo = fields.Selection(
-        [("avance", "Avance Efectivo"), ("intercambio", "Intercambio")],
+        [("avance", "Avance Efectivo")],
         string="Tipo",
         required=True,
     )
