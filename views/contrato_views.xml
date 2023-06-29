@@ -12,8 +12,9 @@
                             <field name="company_id"/>
                             <field name="Contratista"/>
                             <field name="date_start"/>
-                            <field name="saldo_total"/> 
                             <field name="porcentaje_descuento"/> 
+                            <field name="pendiente_pago"/> 
+                            <field name="saldo_total"/> 
                             <field name="total_pagado"/>
                         </group>
                     </group>

@@ -191,6 +191,14 @@ class contrato(models.Model):
     saldo_total = fields.Float("Saldo total", compute="_compute_saldo_total")
     porcentaje_descuento = fields.Float("Porcentaje de descuento")
     total_pagado = fields.Float("Total pagado", compute="_compute_total_pagado")
+    pendiente_pago = fields.Float(
+        "Pendiente de pago", compute="_compute_pendiente_pago"
+    )
+
+    @api.depends("saldo_total", "total_pagado")
+    def _compute_pendiente_pago(self):
+        for rec in self:
+            rec.pendiente_pago = rec.saldo_total - rec.total_pagado
 
     @api.depends("monto_contrato", "contrato_lines.Monto")
     def _compute_monto_faltante(self):
@@ -355,8 +363,8 @@ class pagos(models.Model):
     # partidas = fields.Many2one(comodel_name='cubicacion.order.line')
 
     # Al monto que recibimos arriba le sacamos las deducciones de ley
-    Impuesto1 = fields.Float("ISR", compute="_compute_taxes")
-    Impuesto2 = fields.Float("AS", compute="_compute_taxes")
+    Impuesto1 = fields.Float("ISR(2.0%)", compute="_compute_taxes")
+    Impuesto2 = fields.Float("SS(1.6%)", compute="_compute_taxes")
 
     # Guardamos en una variable lo que queda despues de hacer todas las deducciones de los impuestos
     MontoDespuesDeImpuestos = fields.Float("Despues De Impuestos")
