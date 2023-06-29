@@ -322,6 +322,7 @@ class pagos_wizzard(models.TransientModel):
                 "RetencionIntercambio": Intercambio,
                 "RetencionIntercambio2": Intercambio2,
                 "MontoDefinitivo": MontoDef,
+                "Nomina": self.nomina,
             }
         )
         #  'partidas': self.partidas.cubicacion_order_id
@@ -335,6 +336,7 @@ class pagos_wizzard(models.TransientModel):
 
 class pagos(models.Model):
     _name = "pagos.order"
+    _rec_name = "concepto"
     _inherit = ["mail.thread", "mail.activity.mixin"]
 
     concepto = fields.Char("Concepto", required=True)
@@ -363,8 +365,8 @@ class pagos(models.Model):
     # partidas = fields.Many2one(comodel_name='cubicacion.order.line')
 
     # Al monto que recibimos arriba le sacamos las deducciones de ley
-    Impuesto1 = fields.Float("ISR(2.0%)", compute="_compute_taxes")
-    Impuesto2 = fields.Float("SS(1.6%)", compute="_compute_taxes")
+    Impuesto1 = fields.Float("ISR (2.0%)", compute="_compute_taxes")
+    Impuesto2 = fields.Float("SS (1.6%)", compute="_compute_taxes")
 
     # Guardamos en una variable lo que queda despues de hacer todas las deducciones de los impuestos
     MontoDespuesDeImpuestos = fields.Float("Despues De Impuestos")

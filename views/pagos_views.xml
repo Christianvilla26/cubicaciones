@@ -13,7 +13,6 @@
                             <field name="Impuesto1"/>
                             <field name="Impuesto2"/>
                             <field name="contract_line_id"/>
-                            <field name="contract_line_id2"/>
                         </group>
                         <group>
                             <field name="DescuentoPorContrato" readonly="1"/>
@@ -49,7 +48,6 @@
                 <field name="MontoDespuesDeImpuestos" sum="MontoDespuesDeImpuestos"/>
                 <field name="MontoDefinitivo" sum="MontoDefinitivo"/>
                 <field name="Facturada"/>
-
             </tree>
         </field>
     </record>
