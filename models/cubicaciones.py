@@ -370,6 +370,9 @@ class pagos(models.Model):
 
     # Campo para decir si esta facturada o no
     Facturada = fields.Boolean("Facturada", default=False)
+    DescuentoPorContrato = fields.Float(
+        "Descuento Por Contrato", compute="_compute_descuento"
+    )
 
     # Aqui hacemos el calculo de cada una de las variables
 
@@ -383,6 +386,11 @@ class pagos(models.Model):
             else:
                 rec.ISR = 0.00
                 rec.OtroImpuesto = 0.00
+
+    @api.depends("MontoBruto")
+    def _compute_descuento(self):
+        if self.MontoBruto > self.Monto:
+            self.DescuentoPorContrato = self.MontoBruto - self.Monto
 
     # Si no hay contrato pues
     # MontoAPagar = MontoDespuesDeImpuestos

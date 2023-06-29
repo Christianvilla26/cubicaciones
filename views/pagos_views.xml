@@ -16,6 +16,7 @@
                             <field name="contract_line_id2"/>
                         </group>
                         <group>
+                            <field name="DescuentoPorContrato"/>
                             <field name="MontoBruto"/>
                             <field name="Monto"/>
                             <field name="MontoDespuesDeImpuestos"/>
