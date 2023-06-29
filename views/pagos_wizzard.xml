@@ -8,8 +8,10 @@
                 <sheet>
                     <group>
                         <group>
+                            <field name="MontoBruto" readonly="1"/>
                             <field name="monto" readonly="1"/>
                             <field name="proveedor" readonly="1"/>
+                            <field name="Fecha"/>
                             <!-- <field name="concepto"/> -->
                         </group>
                         <group>

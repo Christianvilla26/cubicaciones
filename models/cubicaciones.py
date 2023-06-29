@@ -224,6 +224,8 @@ class pagos_wizzard(models.TransientModel):
     _name = "pagos.wizzard"
 
     monto = fields.Float("Monto")
+    MontoBruto = fields.Float("Monto bruto")
+    Fecha = fields.Date("Fecha", default=fields.Date.today())
     contrato = fields.Many2one("contratos.order", string="Contrato")
     proveedor = fields.Many2one(
         "res.partner", string="Proveedor", domain=[("supplier", "=", True)]
@@ -244,6 +246,11 @@ class pagos_wizzard(models.TransientModel):
             for rec in cubicacion.partidas:
                 if rec.seleccion and not rec.Pagada:
                     monto = rec.monto_neto + monto
+            MontoBruto = 0
+            for rec in cubicacion.partidas:
+                if rec.seleccion and not rec.Pagada:
+                    MontoBruto = rec.subtotal + MontoBruto
+            result["MontoBruto"] = MontoBruto
             result["monto"] = monto
             result["proveedor"] = cubicacion.proveedor.id
             result["contrato"] = cubicacion.contract_id.id
@@ -293,16 +300,14 @@ class pagos_wizzard(models.TransientModel):
 
         pago_nuevo = pago.create(
             {
-                "concepto": "pago"
-                + " "
-                + self.cubicacion.name
-                + " "
-                + today.strftime("%d/%m/%Y"),
+                "concepto": "pago" + " " + self.cubicacion.name,
                 "proveedor": self.proveedor.id,
                 # 'contract_line_id': self.insumo.id,
+                "Fecha": self.Fecha,
                 "company_id": self.env.user.company_id.id,
                 "contract_line_id2": self.insumo2.id,
                 "Monto": self.monto,
+                "MontoBruto": self.MontoBruto,
                 "Impuesto1": Impuesto1,
                 "Impuesto2": Impuesto2,
                 "MontoDespuesDeImpuestos": MontosDespuesDeImpuestos,
@@ -340,6 +345,8 @@ class pagos(models.Model):
     contract_line_id2 = fields.Many2one("contratos.order.line", string="Insumo2")
     # La sumatoria de todas las lineas que seleccione en las cubicaciones
     Monto = fields.Float("Monto")
+    MontoBruto = fields.Float("Monto Bruto")
+    Fecha = fields.Date("Fecha")
 
     partidas = fields.One2many(
         "cubicacion.order.line", "pago_line_id", string="partidas"
