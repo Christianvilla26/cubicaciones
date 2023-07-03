@@ -322,7 +322,6 @@ class pagos_wizzard(models.TransientModel):
                 "RetencionIntercambio": Intercambio,
                 "RetencionIntercambio2": Intercambio2,
                 "MontoDefinitivo": MontoDef,
-                "Nomina": self.nomina,
             }
         )
         #  'partidas': self.partidas.cubicacion_order_id
