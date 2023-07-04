@@ -308,7 +308,7 @@ class pagos_wizzard(models.TransientModel):
 
         pago_nuevo = pago.create(
             {
-                "concepto": "pago" + " " + self.cubicacion.name,
+                "concepto": self.cubicacion.name,
                 "proveedor": self.proveedor.id,
                 # 'contract_line_id': self.insumo.id,
                 "Fecha": self.Fecha,
