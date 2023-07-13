@@ -72,11 +72,10 @@
                 <thead class="thead-light">
                     <tr>
                         <th><strong>Concepto</strong></th>
+                        <th><strong>Tipo</strong></th>
                         <th ><strong>Cantidad</strong></th>
                         <th ><strong>Precio unitario</strong></th>
-                        <th ><strong>Bruto</strong></th>
-                        <th ><strong>Descuento por contrato</strong></th>
-                        <th ><strong>Al provedor</strong></th>
+                        <th ><strong>Total</strong></th>
                     </tr>
                 </thead>
 
@@ -86,6 +85,9 @@
                             <span t-field="line.name"/>
                         </td>
                         <td>
+                            <span t-field="line.partida_subtype_id"/>
+                        </td>
+                        <td>
                             <span t-field="line.cantidad"/>
                         </td>
                         <td>
@@ -93,12 +95,6 @@
                         </td>
                         <td>
                             <span t-field="line.subtotal"/>
-                        </td>
-                        <td>
-                            <span t-field="line.monto_descontar"/>
-                        </td>
-                        <td>
-                            <span t-field="line.monto_neto"/>
                         </td>
 <!--                        <td>-->
 <!--                            <span t-esc="', '.join(map(lambda x: x.name, line.taxes_id))"/>-->
@@ -124,8 +120,9 @@
     <tr>
       <th>SS</th>
       <th>ISR</th>
+        <th>Retencion 1</th>
+        <th>Retencion 2</th>
         <th>Total Bruto</th>
-        <th>Total Descontado</th>
         <th>Total Neto</th>
 
 
@@ -139,11 +136,14 @@
       <td>
             <span t-field="o.Impuesto1"/>
       </td>
-      <td>
-             <span t-field="o.MontoBruto"/>
+            <td>
+            <span t-field="o.RetencionIntercambio"/>
+      </td>
+            <td>
+            <span t-field="o.RetencionIntercambio2"/>
       </td>
       <td>
-             <span t-field="o.DescuentoPorContrato"/>
+             <span t-field="o.Monto"/>
       </td>
           <td>
              <span t-field="o.MontoDefinitivo"/>
