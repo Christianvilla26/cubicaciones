@@ -11,8 +11,8 @@
                     <field name="partida_type"/>
                     <field name="partida_nivel"/>
                     <field name="cantidad"/>
-                    <field name="unit_price"/>
-                    <field name="subtotal"/>
+                    <field name="unit_price" sum="unit_price"/>
+                    <field name="subtotal" sum="subtotal"/>
                     <field name="Pagada"/>
                 </tree>
             </field>
