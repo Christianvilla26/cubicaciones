@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Define a new form view for the PartidaNivel model -->
+        <!-- <record id="view_partida_nivel_form" model="ir.ui.view">
+            <field name="name">partida.nivel.form</field>
+            <field name="model">partida.nivel</field>
+            <field name="arch" type="xml">
+                <form string="Partida Nivel Form">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="descripcion"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record> -->
+        <record id="view_partida_nivel_tree" model="ir.ui.view">
+            <field name="name">partida.nivel.tree</field>
+            <field name="model">partida.nivel</field>
+            <field name="arch" type="xml">
+                <!-- Define the tree view structure -->
+                <tree>
+                    <field name="name" string="Nivel de Partida"/>
+                    <field name="descripcion" string="Descripción"/>
+                </tree>
+            </field>
+        </record>
+        <!-- Define the action to open the PartidaNivel form view -->
+        <record id="action_partida_nivel" model="ir.actions.act_window">
+            <field name="name">Partida Nivel</field>
+            <field name="res_model">partida.nivel</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+            <menuitem id="menu_partida_nivel" name="Niveles" parent="cubicaciones.cubicaciones_menu_root" action="action_partida_nivel"/>
+    </data>
+</odoo>

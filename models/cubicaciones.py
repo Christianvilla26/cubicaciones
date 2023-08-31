@@ -56,6 +56,7 @@ class CubicacionOrderLine(models.Model):
     )
     seleccion = fields.Boolean("")
     name = fields.Char("Concepto", required=True)
+    partida_nivel = fields.Many2one("partida.nivel", string="Nivel")
     partida_type = fields.Selection(
         [("suministro", "Suministro"), ("m/o", "M/O"), ("todo_costo", "Todo costo")],
         string="Tipo",
@@ -134,8 +135,12 @@ class CubicacionOrderLine(models.Model):
 
 class PartidaSubtipo(models.Model):
     _name = "partida.subtype"
-
     name = fields.Char("Nombre", required=True)
+
+class PartidaNivel(models.Model):
+    _name = "partida.nivel"
+    name = fields.Char("Nivel de Partida", required=True)
+    descripcion = fields.Char("Descripción")
 
 
 class nomina(models.Model):

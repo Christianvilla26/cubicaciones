@@ -31,6 +31,7 @@
                                     <field name="seleccion" attrs="{'invisible': [('Pagada','=', True)]}"/>
                                     <field name="name"/>
                                     <field name="partida_type"/>
+                                    <field name="partida_nivel"/>
                                     <field name="partida_subtype_id"/>
                                     <field name="cantidad"/>
                                     <field name="unit_price"/>

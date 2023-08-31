@@ -6,9 +6,10 @@
             <field name="name">cubicacion.order.line.tree</field>
             <field name="model">cubicacion.order.line</field>
             <field name="arch" type="xml">
-                <tree>
+                <tree create="false">
                     <field name="name"/>
                     <field name="partida_type"/>
+                    <field name="partida_nivel"/>
                     <field name="cantidad"/>
                     <field name="unit_price"/>
                     <field name="subtotal"/>
@@ -19,12 +20,12 @@
 
         <!-- Define an action to open the CubicacionOrderLine tree view -->
         <record id="action_cubicacion_order_line" model="ir.actions.act_window">
-            <field name="name">Cubicacion Order Line</field>
+            <field name="name">Partidas</field>
             <field name="res_model">cubicacion.order.line</field>
             <field name="view_mode">tree,form</field>
         </record>
 
         <!-- Define a menu item to access the CubicacionOrderLine view -->
-        <menuitem id="menu_cubicacion_order_line" name="Cubicacion Order Line" parent="your_module.menu_root" action="action_cubicacion_order_line"/>
+        <menuitem id="menu_cubicacion_order_line" name="Partidas" parent="cubicaciones.cubicaciones_menu_root" action="action_cubicacion_order_line"/>
     </data>
 </odoo>
