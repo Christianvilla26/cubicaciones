@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Define the view for CubicacionOrderLine -->
+        <record id="view_cubicacion_order_line_tree" model="ir.ui.view">
+            <field name="name">cubicacion.order.line.tree</field>
+            <field name="model">cubicacion.order.line</field>
+            <field name="arch" type="xml">
+                <tree create="false">
+                    <field name="name"/>
+                    <field name="partida_type"/>
+                    <field name="partida_nivel"/>
+                    <field name="cantidad"/>
+                    <field name="unit_price" sum="unit_price"/>
+                    <field name="subtotal" sum="subtotal"/>
+                    <field name="Pagada"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Define an action to open the CubicacionOrderLine tree view -->
+        <record id="action_cubicacion_order_line" model="ir.actions.act_window">
+            <field name="name">Partidas</field>
+            <field name="res_model">cubicacion.order.line</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <!-- Define a menu item to access the CubicacionOrderLine view -->
+        <menuitem id="menu_cubicacion_order_line" name="Partidas" parent="cubicaciones.cubicaciones_menu_root" action="action_cubicacion_order_line"/>
+    </data>
+</odoo>
