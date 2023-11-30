@@ -64,5 +64,5 @@
         </field>
     </record>
       <menuitem id="pagos_order_menu" name="Pagos" parent="cubicaciones.cubicaciones_menu_root"
-              action="pagos_action" sequence="3"/>
+              action="pagos_action" sequence="3" groups="mrp.group_mrp_manager"/>
 </odoo>

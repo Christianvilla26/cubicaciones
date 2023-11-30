@@ -12,34 +12,34 @@
                             <field name="company_id"/>
                             <field name="Contratista"/>
                             <field name="date_start"/>
-                            <field name="porcentaje_descuento"/> 
-                            <field name="pendiente_pago"/> 
-                            <field name="saldo_total"/> 
+                            <field name="porcentaje_descuento"/>
+                            <field name="pendiente_pago"/>
+                            <field name="saldo_total"/>
                             <field name="total_pagado"/>
                         </group>
                     </group>
                     <notebook>
-                            <page string="Desglose">
-                                <field name="contrato_lines">
-                                    <tree string="Partidas Tree" editable="bottom" delete="false">
-                                        <field name="contrato_id" invisible="1"/>
-                                        <field name="name"/>
-                                        <field name="Tipo"/>
-                                        <field name="avance" attrs="{'readonly': [('Tipo', '!=', 'avance')]}"/>
-                                        <field name="Monto"/>
-                                    </tree>
-                                </field>
-                            </page>
-                            <page string="partidas">
-                                <field name="partidas">
-                                    <tree string="Partidas Tree"  delete="false">
-                                        <field name="cubicacion_order_id"/>
-                                        <field name="name"/>
-                                        <field name="monto_descontar" sum="monto_descontar"/>
-                                    </tree>
-                                </field>
-                            </page>
-                        </notebook>
+                        <page string="Desglose">
+                            <field name="contrato_lines">
+                                <tree string="Partidas Tree" editable="bottom" delete="false">
+                                    <field name="contrato_id" invisible="1"/>
+                                    <field name="name"/>
+                                    <field name="Tipo"/>
+                                    <field name="avance" attrs="{'readonly': [('Tipo', '!=', 'avance')]}"/>
+                                    <field name="Monto"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="partidas">
+                            <field name="partidas">
+                                <tree string="Partidas Tree" delete="false">
+                                    <field name="cubicacion_order_id"/>
+                                    <field name="name"/>
+                                    <field name="monto_descontar" sum="monto_descontar"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
@@ -63,13 +63,13 @@
         <field name="res_model">contratos.order</field>
         <field name="view_mode">tree,form</field>
         <field name="help" type="html">
-          <p class="oe_view_nocontent_create">
-            Cree su primer contrato!
-          </p>
+            <p class="oe_view_nocontent_create">
+                Cree su primer contrato!
+            </p>
         </field>
     </record>
 
     <!-- This Menu Item must have a parent and an action -->
     <menuitem id="contratos_menu" name="Contrato" action="contratos_order_action"
-              sequence="2" parent="cubicaciones.cubicaciones_menu_root"/>
+              sequence="2" parent="cubicaciones.cubicaciones_menu_root" groups="mrp.group_mrp_manager"/>
 </odoo>

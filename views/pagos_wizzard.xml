@@ -32,7 +32,6 @@
         <record id="pagos_wizzard" model="ir.actions.act_window" >
             <field name="name">Registrar Un Pago</field>
             <field name="target">new</field>
-            <field name="view_type">form</field>
             <field name="res_model">pagos.wizzard</field>
             <field name="view_id" ref="pagos_form_view_wizzard"></field>
         </record>

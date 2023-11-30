@@ -34,6 +34,6 @@
             <field name="view_mode">tree,form</field>
         </record>
 
-            <menuitem id="menu_partida_nivel" name="Niveles" parent="cubicaciones.cubicaciones_menu_root" action="action_partida_nivel"/>
+        <menuitem id="menu_partida_nivel" name="Niveles" parent="cubicaciones.cubicaciones_menu_root" action="action_partida_nivel" groups="mrp.group_mrp_manager"/>
     </data>
 </odoo>

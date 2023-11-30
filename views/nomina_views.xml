@@ -66,5 +66,5 @@
 
     <!-- This Menu Item must have a parent and an action -->
     <menuitem id="nomina_order_menu" name="Nómina" parent="cubicaciones.cubicaciones_menu_root"
-              action="nomina_order_action" sequence="1"/>
+              action="nomina_order_action" sequence="1" groups="mrp.group_mrp_manager"/>
 </odoo>

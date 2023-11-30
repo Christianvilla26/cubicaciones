@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 {
     "name": "Cubicaciones",
-    "version": "12.0",
+    "version": "15.0",
     "category": "Sale",
     "author": "Kritiam",
-    "depends": ["base", "mrp"],
+    "depends": ["base", "mrp", "account", "web"],
     "data": [
         "security/ir.model.access.csv",
         "views/pagos_wizzard.xml",
@@ -15,6 +15,10 @@
         "views/pagos_views.xml",
         "views/nivel_views.xml",
         "report/cubication_order_templates.xml",
-        "views/css_loader.xml",
     ],
+    "assets": {
+        "web.assets_backend": [
+            "cubicaciones/static/src/css/style.css"
+        ]
+    }
 }

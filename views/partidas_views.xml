@@ -26,6 +26,6 @@
         </record>
 
         <!-- Define a menu item to access the CubicacionOrderLine view -->
-        <menuitem id="menu_cubicacion_order_line" name="Partidas" parent="cubicaciones.cubicaciones_menu_root" action="action_cubicacion_order_line"/>
+        <menuitem id="menu_cubicacion_order_line" name="Partidas" parent="cubicaciones.cubicaciones_menu_root" action="action_cubicacion_order_line" groups="mrp.group_mrp_manager"/>
     </data>
 </odoo>

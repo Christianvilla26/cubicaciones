@@ -86,5 +86,5 @@
 
     <!-- This Menu Item must have a parent and an action -->
     <menuitem id="cubicaciones_menu_root" name="Cubicaciones" web_icon="cubicaciones,static/description/icon.png"
-              action="cubicaciones_action" sequence="10"/>
+              action="cubicaciones_action" sequence="10" groups="mrp.group_mrp_manager"/>
 </odoo>

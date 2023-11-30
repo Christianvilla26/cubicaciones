@@ -3,6 +3,7 @@
 from odoo import models, fields, api
 from datetime import date
 
+
 # from odoo.exceptions import ValidationError
 
 
@@ -24,8 +25,7 @@ class CubicacionOrder(models.Model):
     total = fields.Float("Total Cubicado", compute="_compute_total")
     aprobada = fields.Boolean("Aprobada")
     nomina = fields.Many2one("nomina.order", string="Nomina")
-    # proveedor = fields.Many2one('res.partner', string='Proveedor', domain=[
-    #                             ('supplier', '=', True)])
+    # proveedor = fields.Many2one('res.partner', string='Proveedor')
     proveedor = fields.Many2one("res.partner", string="Proveedor")
     partidas = fields.One2many(
         comodel_name="cubicacion.order.line",
@@ -92,15 +92,15 @@ class CubicacionOrderLine(models.Model):
     def _onchange_descontar(self):
         if self.descontar:
             montoADescontar = self.subtotal * (
-                self.cubicacion_order_id.contract_id.porcentaje_descuento * 0.01
+                    self.cubicacion_order_id.contract_id.porcentaje_descuento * 0.01
             )
             montoMaximoAPagar = (
-                self.cubicacion_order_id.contract_id.saldo_total
-                - self.cubicacion_order_id.contract_id.total_pagado
+                    self.cubicacion_order_id.contract_id.saldo_total
+                    - self.cubicacion_order_id.contract_id.total_pagado
             )
             if montoADescontar <= montoMaximoAPagar:
                 self.monto_descontar = self.subtotal * (
-                    self.cubicacion_order_id.contract_id.porcentaje_descuento * 0.01
+                        self.cubicacion_order_id.contract_id.porcentaje_descuento * 0.01
                 )
             else:
                 self.monto_descontar = montoMaximoAPagar
@@ -116,21 +116,6 @@ class CubicacionOrderLine(models.Model):
             else:
                 rec.ISR = 0.00
                 rec.OtroImpuesto = 0.00
-
-    # @api.depends('subtotal', 'ISR', 'OtroImpuesto')
-    # def subtotal_2(self):
-    #     for rec in self:
-    #         rec.subtotal2 = rec.subtotal - rec.ISR - rec.OtroImpuesto
-
-    # @api.depends('contract_line_id.porcentaje', 'subtotal2')
-    # def _compute_retencion(self):
-    #     for rec in self:
-    #         amount = (rec.contract_line_id.porcentaje / 100) * rec.subtotal2
-    #         # print(amount, rec.contract_line_id.Monto)
-    #         # if amount >= rec.contract_line_id.Monto:
-    #         #     rec.retencion = rec.contract_line_id.Monto
-    #         # else:
-    #         rec.retencion = amount
 
 
 class PartidaSubtipo(models.Model):
@@ -188,7 +173,7 @@ class contrato(models.Model):
         [("no_paid", "No pagado"), ("paid", "Pagado")], string="Estatus"
     )
     Contratista = fields.Many2one(
-        "res.partner", string="Proveedor", domain=[("supplier", "=", True)]
+        "res.partner", string="Proveedor", domain=[("supplier_rank", ">", 0)]
     )
     contrato_lines = fields.One2many(
         "contratos.order.line", inverse_name="contrato_id", string="Líneas de contrato"
@@ -241,7 +226,7 @@ class pagos_wizzard(models.TransientModel):
     Fecha = fields.Date("Fecha", default=fields.Date.today())
     contrato = fields.Many2one("contratos.order", string="Contrato")
     proveedor = fields.Many2one(
-        "res.partner", string="Proveedor", domain=[("supplier", "=", True)]
+        "res.partner", string="Proveedor", domain=[("supplier_rank", ">", 0)]
     )
     insumo = fields.Many2one("contratos.order.line", string="Insumo 1")
     insumo2 = fields.Many2one("contratos.order.line", string="Insumo 2")
@@ -270,7 +255,6 @@ class pagos_wizzard(models.TransientModel):
             result["cubicacion"] = cubicacion.id
         return result
 
-    @api.multi
     def crearPago(self):
         pago = self.env["pagos.order"]
         today = date.today()
@@ -287,13 +271,10 @@ class pagos_wizzard(models.TransientModel):
             temp = self.insumo.porcentaje / 100
             Intercambio = temp * MontosDespuesDeImpuestos
             Resta = self.insumo.precio_unitario - self.insumo.adeudado
-            print(Resta)
-            print(Intercambio)
             if Intercambio >= Resta:
                 Intercambio = Resta
 
         MontoDef = MontosDespuesDeImpuestos - Intercambio
-        print(MontoDef)
 
         Intercambio2 = 0
 
@@ -302,14 +283,10 @@ class pagos_wizzard(models.TransientModel):
 
             Intercambio2 = temp * MontoDef
             Resta = self.insumo2.precio_unitario - self.insumo2.adeudado
-            print(Resta)
-            print(Intercambio2)
             if Intercambio2 >= Resta:
                 Intercambio2 = Resta
 
         MontoDef = MontoDef - Intercambio2
-
-        # print(self.partidas)
 
         pago_nuevo = pago.create(
             {
@@ -345,7 +322,7 @@ class pagos(models.Model):
 
     concepto = fields.Char("Concepto", required=True)
     proveedor = fields.Many2one(
-        "res.partner", string="Proveedor", domain=[("supplier", "=", True)]
+        "res.partner", string="Proveedor", domain=[("supplier_rank", ">", 0)]
     )
     company_id = fields.Many2one(
         "res.company",
@@ -444,36 +421,13 @@ class linea_contrato(models.Model):
         "pago_id",
         "Tipo",
         "pago_id.RetencionIntercambio2",
-        "pago_id.RetencionIntercambio",
     )
     def compute_adeudado(self):
         for rec in self:
-            # temp = 0
-            if rec.Tipo == "intercambio":
-                print("intercambio", rec.pago_id)
-                print(rec.pago_id.mapped("RetencionIntercambio"))
-                rec.adeudado = sum([pago.RetencionIntercambio for pago in rec.pago_id])
-            else:
-                print("avance", rec.pago_id)
-                print(rec.pago_id.mapped("RetencionIntercambio2"))
-                rec.adeudado = sum([pago.RetencionIntercambio2 for pago in rec.pago_id])
-            # for pago in rec.pagos_ids:
-            #    if rec.Tipo == 'intercambio':
-            #        rec.adeudado += pago.RetencionIntercambio
-            #        print('pago 1 = ', pago.RetencionIntercambio)
-            #    else:
-            #        rec.adeudado += pago.RetencionIntercambio2
-            #        print('pago 2: ', pago.RetencionIntercambio2)
-
-            rec.adeudado
+            rec.adeudado = sum([pago.RetencionIntercambio2 for pago in rec.pago_id])
 
     @api.depends("Tipo", "avance", "Producto", "porcentaje")
     def _compute_total(self):
         for rec in self:
-            if rec.Tipo == "avance":
-                rec.Monto = rec.avance
-                rec.precio_unitario = rec.avance
-
-            if rec.Tipo == "intercambio":
-                rec.precio_unitario = rec.Producto.list_price or 0.0
-                rec.Monto = rec.Producto.list_price
+            rec.Monto = rec.avance
+            rec.precio_unitario = rec.avance

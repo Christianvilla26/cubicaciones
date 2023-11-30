@@ -1,234 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-     <data>
-<!--        <report-->
-<!--            string="Reporte de Cubicación"-->
-<!--            id="action_report_purchase_order"-->
-<!--            model="pagos.order"-->
-<!--            report_type="qweb-pdf"-->
-<!--            name="purchase.report_purchaseorder"-->
-<!--            file="purchase.report_purchaseorder"-->
-<!--            print_report_name="-->
-<!--                (object.state in ('draft', 'sent') and 'Request for Quotation - %s' % (object.name) or-->
-<!--                'Purchase Order - %s' % (object.name))"-->
-<!--        />-->
+    <data>
+        <record id="report_pagos_order" model="ir.actions.report">
+            <field name="name">Reporte de Cubicación</field>
+            <field name="model">pagos.order</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">cubicaciones.report_cubicacion_document</field>
+            <field name="report_file">cubicaciones.report_cubicacion_document</field>
+            <field name="print_report_name">'Reporte de Cubicación - %s' % (object.concepto)</field>
+            <field name="binding_model_id" ref="model_pagos_order"/>
+            <field name="binding_type">report</field>
+        </record>
+        <template id="report_cubicacion_document">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <div class="oe_structure"/>
+                            <p style=" width: 100%; height: 0px; border: 0.3px solid #e9ecef;">
+                            </p>
+                            <div>
+                                <div t-if="o.partidas[0].cubicacion_order_id.date_start">
+                                    <strong>Fecha :</strong>
+                                    <div t-field="o.partidas[0].cubicacion_order_id.date_start"
+                                         class="col-3 bm-2"></div>
+                                </div>
+                                <strong>Codigo:</strong>
+                                <div t-field="o.id" class="col-3 bm-2"></div>
+                                <strong>Concepto:</strong>
+                                <div t-field="o.concepto" class="col-3 bm-2"></div>
+                                <strong>Proveedor:</strong>
+                                <div t-field="o.proveedor" class="col-3 bm-2"></div>
+                                <div t-if="o.proveedor.vat">
+                                    <strong>RNC o Cedula:</strong>
+                                    <div t-field="o.proveedor.vat" class="col-3 bm-2"></div>
+                                </div>
+                            </div>
 
-        <report
-            string="Reporte de Cubicación"
-            id="report_pagos_order"
-            model="pagos.order"
-            report_type="qweb-pdf"
-            name="cubicaciones.report_cubicacion_document"
-            file="cubicaciones.report_cubicacion_document"
-            print_report_name="'Reporte de Cubicación - %s' % (object.concepto)"
-        />
+                            <div style="margin: 20px 0px">
+                                <table class="table table-sm o_main_table">
+
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th><strong>Concepto</strong></th>
+                                            <th><strong>Cantidad</strong></th>
+                                            <th><strong>Precio unitario</strong></th>
+                                            <th><strong>Bruto</strong></th>
+                                            <th><strong>Descuento por contrato</strong></th>
+                                            <th><strong>Al provedor</strong></th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <tr t-foreach="o.partidas" t-as="line">
+                                            <td>
+                                                <span t-field="line.name"/>
+                                            </td>
+                                            <td>
+                                                <span t-field="line.cantidad"/>
+                                            </td>
+                                            <td>
+                                                <span t-field="line.unit_price"/>
+                                            </td>
+                                            <td>
+                                                <span t-field="line.subtotal"/>
+                                            </td>
+                                            <td>
+                                                <span t-field="line.monto_descontar"/>
+                                            </td>
+                                            <td>
+                                                <span t-field="line.monto_neto"/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+
+                            <table class="table table-sm o_main_table">
+                                <thead>
+                                    <tr>
+                                        <th>SS</th>
+                                        <th>ISR</th>
+                                        <th>Total Bruto</th>
+                                        <th>Total Descontado</th>
+                                        <th>Total Neto</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <span t-field="o.Impuesto2"/>
+                                        </td>
+                                        <td>
+                                            <span t-field="o.Impuesto1"/>
+                                        </td>
+                                        <td>
+                                            <span t-field="o.MontoBruto"/>
+                                        </td>
+                                        <td>
+                                            <span t-field="o.Monto"/>
+                                        </td>
+                                        <td>
+                                            <span t-field="o.MontoDefinitivo"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div id="total" class="row justify-content-end">
+                                <div class="col-3">
+                                    <strong>Total</strong>
+                                    <span t-field="o.MontoDefinitivo"/>
+                                </div>
+                            </div>
+                            <footer style="padding-top: 50px">
+                                <div class="container">
+
+                                    <div class="row" style=" text-align: center;">
+                                        <div class="col-sm">
+                                            ______________________
+                                        </div>
+                                        <div class="col-sm">
+                                            ______________________
+                                        </div>
+                                    </div>
+                                    <div class="row" style=" text-align: center;">
+                                        <div class="col-sm">
+                                            <strong>RECIBIDO POR</strong>
+                                        </div>
+                                        <div class="col-sm">
+                                            <strong>AUTORIZADA POR</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </footer>
+                            <div class="oe_structure"/>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
     </data>
-
-
-
-<template id="report_cubicacion_document">
-    <t t-call="web.html_container">
-     <t t-foreach="docs" t-as="o">
-          <t t-call="web.external_layout">
-
-
-        <div class="page">
-            <div class="oe_structure"/>
-
-<!--            <h2 t-if="o.state == 'draft'">Reporte de pago #<span t-field="o.name"/></h2>-->
-<!--            <h2 t-if="o.state in ['sent', 'to approve']">Cubicación #<span t-field="o.name"/></h2>-->
-
-
-
-
-            <p style="
-    width: 100%;
-    height: 0px;
-    border: 0.3px solid #e9ecef;
-">
-
-</p>
-            <div>
-                <div t-if="o.partidas[0].cubicacion_order_id.date_start">
-                    <strong>Fecha :</strong>
-                    <div t-field="o.partidas[0].cubicacion_order_id.date_start" class="col-3 bm-2"></div>
-                </div>
-                <strong>Codigo:</strong>
-                <div t-field="o.id" class="col-3 bm-2"></div>
-                <strong>Concepto:</strong>
-                <div t-field="o.concepto" class="col-3 bm-2"></div>
-                <strong>Proveedor:</strong>
-                <div t-field="o.proveedor" class="col-3 bm-2"></div>
-                <div t-if="o.proveedor.vat">
-                     <strong>RNC o Cedula:</strong>
-                    <div t-field="o.proveedor.vat" class="col-3 bm-2"></div>
-                </div>
-
-            </div>
-
-            <div style="margin: 20px 0px">
-                  <table class="table table-sm o_main_table">
-
-                <thead class="thead-light">
-                    <tr>
-                        <th><strong>Concepto</strong></th>
-                        <!-- <th><strong>Tipo</strong></th> -->
-                        <th ><strong>Cantidad</strong></th>
-                        <th ><strong>Precio unitario</strong></th>
-                        <!-- <th ><strong>Total</strong></th> -->
-                        <th ><strong>Bruto</strong></th>
-                        <th ><strong>Descuento por contrato</strong></th>
-                        <th ><strong>Al provedor</strong></th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    <tr t-foreach="o.partidas" t-as="line">
-                          <td>
-                            <span t-field="line.name"/>
-                        </td>
-                        <!-- <td>
-                            <span t-field="line.partida_subtype_id"/>
-                        </td> -->
-                        <td>
-                            <span t-field="line.cantidad"/>
-                        </td>
-                        <td>
-                            <span t-field="line.unit_price"/>
-                        </td>
-                        <td>
-                            <span t-field="line.subtotal"/>
-                        </td>
-                        <td>
-                            <span t-field="line.monto_descontar"/>
-                        </td>
-                        <td>
-                            <span t-field="line.monto_neto"/>
-                        </td>
-<!--                        <td>-->
-<!--                            <span t-esc="', '.join(map(lambda x: x.name, line.taxes_id))"/>-->
-<!--                        </td>-->
-<!--                        <td class="text-center">-->
-<!--                            <span t-field="line.date_planned"/>-->
-<!--                        </td>-->
-<!--                        <td class="text-right">-->
-<!--                            <span t-field="line.product_qty"/>-->
-<!--                            <span t-field="line.product_uom.name" groups="uom.group_uom"/>-->
-<!--                        </td>-->
-<!--                        <td class="text-right">-->
-<!--                            <span t-field="line.price_unit"/>-->
-<!--                        </td>-->
-                    </tr>
-                </tbody>
-            </table>
-            </div>
-
-
-            <table class="table table-sm o_main_table">
-  <thead>
-    <tr>
-      <th>SS</th>
-      <th>ISR</th>
-        <!-- <th>Retencion 1</th>
-        <th>Retencion 2</th> -->
-        <th>Total Bruto</th>
-        <th>Total Descontado</th>
-        <th>Total Neto</th>
-
-
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>
-          <span t-field="o.Impuesto2"/>
-      </td>
-      <td>
-            <span t-field="o.Impuesto1"/>
-      </td>
-       <td>
-             <span t-field="o.MontoBruto"/>
-      </td>
-        <!-- <td>
-            <span t-field="o.RetencionIntercambio"/>
-      </td>
-            <td>
-            <span t-field="o.RetencionIntercambio2"/>
-      </td> -->
-      <td>
-             <span t-field="o.Monto"/>
-      </td>
-          <td>
-             <span t-field="o.MontoDefinitivo"/>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-
-
-            <div id="total" class="row justify-content-end">
-                <div class="col-3">
-                    <strong>Total</strong>
-                    <span t-field="o.MontoDefinitivo"/>
-<!--                    <table class="table table-sm">-->
-<!--                        <tr class="border-black">-->
-<!--                            <td><strong>Subtotal</strong></td>-->
-<!--                            <td class="text-right">-->
-<!--                                <span t-field="o.amount_untaxed"-->
-<!--                                    t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>-->
-<!--                            </td>-->
-<!--                        </tr>-->
-<!--                        <tr>-->
-<!--                            <td>Taxes</td>-->
-<!--                            <td class="text-right">-->
-<!--                                <span t-field="o.amount_tax"-->
-<!--                                    t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>-->
-<!--                            </td>-->
-<!--                        </tr>-->
-<!--                        <tr class="border-black o_total">-->
-<!--                            <td><strong>Total</strong></td>-->
-<!--                            <td class="text-right">-->
-<!--                                <span t-field="o.amount_total"-->
-<!--                                    t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>-->
-<!--                            </td>-->
-<!--                        </tr>-->
-<!--                    </table>-->
-                </div>
-            </div>
-<footer style="padding-top: 50px">
-                         <div class="container">
-
-                  <div class="row" style="
-    text-align: center;
-">
-                      <div class="col-sm">
-            ______________________
-    </div>
-                    <div class="col-sm">
-            ______________________
-    </div>
-  </div>
-  <div class="row" style="
-    text-align: center;
-">
-    <div class="col-sm">
-     <strong>RECIBIDO POR</strong>
-    </div>
-    <div class="col-sm">
-     <strong>AUTORIZADA POR</strong>
-    </div>
-  </div>
-</div>
-</footer>
-
-
-<!--            <p t-field="o.notes"/>-->
-            <div class="oe_structure"/>
-        </div>
-        </t>
-     </t>
-    </t>
-
-</template>
 </odoo>
