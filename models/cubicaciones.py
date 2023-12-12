@@ -17,7 +17,7 @@ class CubicacionOrder(models.Model):
     company_id = fields.Many2one(
         "res.company",
         string="Compañía",
-        default=lambda self: self.env.user.company_id.id,
+        default=lambda self: self.env.company.id,
     )
     date_start = fields.Date("Fecha inicio", required=True)
     date_end = fields.Date("Fecha fin")
@@ -135,7 +135,7 @@ class nomina(models.Model):
     company_id = fields.Many2one(
         "res.company",
         string="Compañía",
-        default=lambda self: self.env.user.company_id.id,
+        default=lambda self: self.env.company.id,
     )
     # supplier_id = fields.Many2one('res.partner', string='Proveedor', domain=[('supplier', '=', True)])
 
@@ -160,7 +160,7 @@ class contrato(models.Model):
     company_id = fields.Many2one(
         "res.company",
         string="Compañía",
-        default=lambda self: self.env.user.company_id.id,
+        default=lambda self: self.env.company.id,
     )
     partidas = fields.Many2many(
         "cubicacion.order.line", string="Partidas", compute="_compute_partidas"
@@ -327,7 +327,7 @@ class pagos(models.Model):
     company_id = fields.Many2one(
         "res.company",
         string="Compañía",
-        default=lambda self: self.env.user.company_id.id,
+        default=lambda self: self.env.company.id,
     )
     # contract_line_id = fields.Many2one('contratos.order.line', string='Insumo')
     contract_line_id = fields.One2many(
