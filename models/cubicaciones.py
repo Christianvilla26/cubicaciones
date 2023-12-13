@@ -375,7 +375,6 @@ class pagos(models.Model):
                 rec.Impuesto1 = rec.Monto * 0.02
                 rec.Impuesto2 = rec.Monto * 0.0161
             else:
-                rec.ISR = 0.00
                 rec.OtroImpuesto = 0.00
 
     @api.depends("MontoBruto")
