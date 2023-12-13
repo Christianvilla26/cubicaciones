@@ -294,7 +294,7 @@ class pagos_wizzard(models.TransientModel):
                 "proveedor": self.proveedor.id,
                 # 'contract_line_id': self.insumo.id,
                 "Fecha": self.Fecha,
-                "company_id": self.env.company,
+                "company_id": self.env.company.id,
                 "contract_line_id2": self.insumo2.id,
                 "Monto": self.monto,
                 "MontoBruto": self.MontoBruto,
