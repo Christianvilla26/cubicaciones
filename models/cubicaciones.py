@@ -374,8 +374,6 @@ class pagos(models.Model):
             if rec.proveedor.company_type == "person":
                 rec.Impuesto1 = rec.Monto * 0.02
                 rec.Impuesto2 = rec.Monto * 0.0161
-            else:
-                rec.OtroImpuesto = 0.00
 
     @api.depends("MontoBruto")
     def _compute_descuento(self):
