@@ -373,6 +373,8 @@ class pagos(models.Model):
     def _compute_descuento(self):
         if self.MontoBruto > self.Monto:
             self.DescuentoPorContrato = self.MontoBruto - self.Monto
+        else:
+            self.DescuentoPorContrato = 0.00
 
     # Si no hay contrato pues
     # MontoAPagar = MontoDespuesDeImpuestos
