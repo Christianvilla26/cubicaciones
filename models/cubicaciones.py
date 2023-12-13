@@ -107,15 +107,6 @@ class CubicacionOrderLine(models.Model):
         else:
             self.monto_descontar = 0.00
 
-    @api.depends("cantidad", "subtotal")
-    def _compute_taxes(self):
-        for rec in self:
-            if rec.cubicacion_order_id.proveedor.company_type == "person":
-                rec.ISR = rec.subtotal * 0.02
-                rec.OtroImpuesto = rec.subtotal * 0.0161
-            else:
-                rec.ISR = 0.00
-                rec.OtroImpuesto = 0.00
 
 
 class PartidaSubtipo(models.Model):
