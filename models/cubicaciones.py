@@ -223,6 +223,16 @@ class pagos_wizzard(models.TransientModel):
     insumo2 = fields.Many2one("contratos.order.line", string="Insumo 2")
     cubicacion = fields.Many2one("cubicacion.order", string="cubicacion")
     concepto = fields.Char(string="concepto")
+    credit_account_id = fields.Many2one(
+        'account.account', 
+        string='Credit Account', 
+        help='Select the account to be used for credits in the account move'
+    )
+    journal_id = fields.Many2one(
+        'account.journal', 
+        string='Journal', 
+        help='Select the journal to be used for the account move'
+    )
 
     @api.model
     def default_get(self, fields):
@@ -295,6 +305,9 @@ class pagos_wizzard(models.TransientModel):
                 "RetencionIntercambio": Intercambio,
                 "RetencionIntercambio2": Intercambio2,
                 "MontoDefinitivo": MontoDef,
+                "journal_id": self.journal_id.id,
+                "debit_account_id": self.proveedor.property_account_payable_id.id,
+                "credit_account_id": self.credit_account_id.id,
             }
         )
         #  'partidas': self.partidas.cubicacion_order_id
@@ -304,6 +317,29 @@ class pagos_wizzard(models.TransientModel):
                 line.pago_line_id = pago_nuevo.id
         for line in self.contrato.contrato_lines:
             line.pago_id = pago_nuevo.id
+
+         # Create an account move
+        account_move = self.env['account.move'].create({
+            'journal_id': self.journal_id.id,
+            'date': self.Fecha,
+            'line_ids': [(0, 0, {
+                'account_id': self.proveedor.property_account_payable_id.id,
+                'partner_id': self.proveedor.id,
+                'name': self.cubicacion.name,
+                'debit': MontoDef,  # Debit amount
+                'credit': 0.0,
+            }), (0, 0, {
+                'account_id': self.credit_account_id.id,
+                'partner_id': self.proveedor.id,
+                'name': self.cubicacion.name,
+                'debit': 0.0,
+                'credit': MontoDef,  # Credit amount
+            })],
+        })
+
+        # Post the account move
+        account_move.action_post()
+
 
 
 class pagos(models.Model):
@@ -329,7 +365,21 @@ class pagos(models.Model):
     Monto = fields.Float("Monto")
     MontoBruto = fields.Float("Monto Bruto")
     Fecha = fields.Date("Fecha")
-
+    debit_account_id = fields.Many2one(
+        'account.account', 
+        string='Debit Account', 
+        help='Select the account to be used for debits in the account move'
+    )
+    credit_account_id = fields.Many2one(
+        'account.account', 
+        string='Credit Account', 
+        help='Select the account to be used for credits in the account move'
+    )
+    journal_id = fields.Many2one(
+        'account.journal', 
+        string='Journal', 
+        help='Select the journal to be used for the account move'
+    )
     partidas = fields.One2many(
         "cubicacion.order.line", "pago_line_id", string="partidas"
     )
