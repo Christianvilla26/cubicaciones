@@ -21,7 +21,6 @@
                             <field name="contrato" readonly="1"/>
                         </group>
                         <group>
-                            <field name="credit_account_id"/>
                             <field name="journal_id"/>
                         </group>
                     </group>
