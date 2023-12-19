@@ -230,7 +230,7 @@ class pagos_wizzard(models.TransientModel):
     )
     journal_id = fields.Many2one(
         'account.journal', 
-        string='Journal', 
+        string='Diario Contable', 
         help='Select the journal to be used for the account move'
     )
 
