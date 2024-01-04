@@ -322,7 +322,6 @@ class pagos_wizzard(models.TransientModel):
         account_move = self.env['account.move'].create({
             'journal_id': self.journal_id.id,
             'date': self.Fecha,
-            'ref': 'pago ' + self.cubicacion.name + ' ' + date.today().strftime("%d/%m/%Y"),
             'partner_id': self.proveedor.id,
             'line_ids': [(0, 0, {
                 'account_id': self.proveedor.property_account_payable_id.id,
