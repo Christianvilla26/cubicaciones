@@ -289,11 +289,28 @@ class pagos_wizzard(models.TransientModel):
 
         MontoDef = MontoDef - Intercambio2
 
+        # Create an account move
+        journal_id = self.env['account.move']._search_default_journal(journal_types=['purchase'])
+        self.env['account.move'].create({
+            'date': self.Fecha,
+            'invoice_date': self.Fecha,
+            'partner_id': self.proveedor.id,
+            'journal_id': journal_id.id,
+            'move_type': 'in_invoice',
+            'invoice_line_ids':
+                [(0, 0, {
+                    'name': self.cubicacion.name,
+                    'quantity': 1,
+                    'price_unit': MontoDef,
+                    'account_id': self.credit_account_id.id,
+                    'exclude_from_invoice_tab': False,
+                })],
+        })
+
         pago_nuevo = pago.create(
             {
                 "concepto": self.cubicacion.name,
                 "proveedor": self.proveedor.id,
-                # 'contract_line_id': self.insumo.id,
                 "Fecha": self.Fecha,
                 "company_id": self.env.company.id,
                 "contract_line_id2": self.insumo2.id,
@@ -305,8 +322,6 @@ class pagos_wizzard(models.TransientModel):
                 "RetencionIntercambio": Intercambio,
                 "RetencionIntercambio2": Intercambio2,
                 "MontoDefinitivo": MontoDef,
-                "journal_id": self.journal_id.id,
-                "debit_account_id": self.proveedor.property_account_payable_id.id,
                 "credit_account_id": self.credit_account_id.id,
             }
         )
@@ -317,30 +332,6 @@ class pagos_wizzard(models.TransientModel):
                 line.pago_line_id = pago_nuevo.id
         for line in self.contrato.contrato_lines:
             line.pago_id = pago_nuevo.id
-
-         # Create an account move
-        account_move = self.env['account.move'].create({
-            'journal_id': self.journal_id.id,
-            'date': self.Fecha,
-            'partner_id': self.proveedor.id,
-            'line_ids': [(0, 0, {
-                'account_id': self.proveedor.property_account_payable_id.id,
-                'partner_id': self.proveedor.id,
-                'name': self.cubicacion.name,
-                'debit': MontoDef,  # Debit amount
-                'credit': 0.0,
-            }), (0, 0, {
-                'account_id': self.credit_account_id.id,
-                'partner_id': self.proveedor.id,
-                'name': self.cubicacion.name,
-                'debit': 0.0,
-                'credit': MontoDef,  # Credit amount
-            })],
-        })
-
-        # Post the account move
-        account_move.action_post()
-
 
 
 class pagos(models.Model):
