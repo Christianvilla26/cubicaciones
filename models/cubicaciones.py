@@ -34,6 +34,18 @@ class CubicacionOrder(models.Model):
     )
     pagada = fields.Boolean("Pagada", compute="_compute_pagada", store=True)
 
+    @api.model
+    def _default_currency(self):
+        print("Default currency")
+        Currency = self.env['res.currency']
+        dop_currency = Currency.search([('name', '=', 'DOP')], limit=1)
+        if dop_currency:
+            return dop_currency.id
+        else:
+            return Currency.search([], limit=1).id
+
+    moneda = fields.Many2one("res.currency", string="Moneda", required=True, default=_default_currency)
+
     @api.depends("partidas.Pagada")
     def _compute_pagada(self):
         for rec in self:
@@ -268,6 +280,7 @@ class pagos_wizzard(models.TransientModel):
         company_id = self.env.user.company_id.id
         Intercambio = 0
 
+
         if self.insumo:
             temp = self.insumo.porcentaje / 100
             Intercambio = temp * MontosDespuesDeImpuestos
@@ -296,6 +309,7 @@ class pagos_wizzard(models.TransientModel):
             'invoice_date': self.Fecha,
             'partner_id': self.proveedor.id,
             'journal_id': journal_id.id,
+            'currency_id': self.cubicacion.moneda.id,
             'move_type': 'in_invoice',
             'invoice_line_ids':
                 [(0, 0, {
@@ -397,6 +411,7 @@ class pagos(models.Model):
     DescuentoPorContrato = fields.Float(
         "Descuento Por Contrato", compute="_compute_descuento"
     )
+    moneda = fields.Many2one("res.currency", string="Moneda")
 
     # Aqui hacemos el calculo de cada una de las variables
 
