@@ -77,6 +77,19 @@ class CubicacionOrderLine(models.Model):
     contract_line_id = fields.Many2one("contratos.order.line", string="Insumo")
     pago_line_id = fields.Many2one("pagos.order", string="partidas")
     monto_neto = fields.Float("Monto Neto", compute="_compute_monto_neto")
+    company_id = fields.Many2one(
+        "res.company",
+        string="Company",
+        compute="_compute_company_id",
+        store=True,
+        readonly=False,
+        index=True,
+    )
+    
+    @api.depends("cubicacion_order_id.company_id")
+    def _compute_company_id(self):
+        for rec in self:
+            rec.company_id = rec.cubicacion_order_id.company_id
 
     @api.depends("subtotal", "monto_descontar")
     def _compute_monto_neto(self):
