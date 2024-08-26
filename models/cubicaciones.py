@@ -34,6 +34,18 @@ class CubicacionOrder(models.Model):
     )
     pagada = fields.Boolean("Pagada", compute="_compute_pagada", store=True)
 
+    @api.model
+    def _default_currency(self):
+        print("Default currency")
+        Currency = self.env['res.currency']
+        dop_currency = Currency.search([('name', '=', 'DOP')], limit=1)
+        if dop_currency:
+            return dop_currency.id
+        else:
+            return Currency.search([], limit=1).id
+
+    moneda = fields.Many2one("res.currency", string="Moneda", required=True, default=_default_currency)
+
     @api.depends("partidas.Pagada")
     def _compute_pagada(self):
         for rec in self:
@@ -236,6 +248,16 @@ class pagos_wizzard(models.TransientModel):
     insumo2 = fields.Many2one("contratos.order.line", string="Insumo 2")
     cubicacion = fields.Many2one("cubicacion.order", string="cubicacion")
     concepto = fields.Char(string="concepto")
+    credit_account_id = fields.Many2one(
+        'account.account', 
+        string='Credit Account', 
+        help='Select the account to be used for credits in the account move'
+    )
+    journal_id = fields.Many2one(
+        'account.journal', 
+        string='Diario Contable', 
+        help='Select the journal to be used for the account move'
+    )
 
     @api.model
     def default_get(self, fields):
@@ -271,6 +293,7 @@ class pagos_wizzard(models.TransientModel):
         company_id = self.env.user.company_id.id
         Intercambio = 0
 
+
         if self.insumo:
             temp = self.insumo.porcentaje / 100
             Intercambio = temp * MontosDespuesDeImpuestos
@@ -292,11 +315,29 @@ class pagos_wizzard(models.TransientModel):
 
         MontoDef = MontoDef - Intercambio2
 
+        # Create an account move
+        journal_id = self.env['account.move']._search_default_journal(journal_types=['purchase'])
+        self.env['account.move'].create({
+            'date': self.Fecha,
+            'invoice_date': self.Fecha,
+            'partner_id': self.proveedor.id,
+            'journal_id': journal_id.id,
+            'currency_id': self.cubicacion.moneda.id,
+            'move_type': 'in_invoice',
+            'invoice_line_ids':
+                [(0, 0, {
+                    'name': self.cubicacion.name,
+                    'quantity': 1,
+                    'price_unit': MontoDef,
+                    'account_id': self.credit_account_id.id,
+                    'exclude_from_invoice_tab': False,
+                })],
+        })
+
         pago_nuevo = pago.create(
             {
                 "concepto": self.cubicacion.name,
                 "proveedor": self.proveedor.id,
-                # 'contract_line_id': self.insumo.id,
                 "Fecha": self.Fecha,
                 "company_id": self.env.company.id,
                 "contract_line_id2": self.insumo2.id,
@@ -308,6 +349,7 @@ class pagos_wizzard(models.TransientModel):
                 "RetencionIntercambio": Intercambio,
                 "RetencionIntercambio2": Intercambio2,
                 "MontoDefinitivo": MontoDef,
+                "credit_account_id": self.credit_account_id.id,
             }
         )
         #  'partidas': self.partidas.cubicacion_order_id
@@ -342,7 +384,21 @@ class pagos(models.Model):
     Monto = fields.Float("Monto")
     MontoBruto = fields.Float("Monto Bruto")
     Fecha = fields.Date("Fecha")
-
+    debit_account_id = fields.Many2one(
+        'account.account', 
+        string='Debit Account', 
+        help='Select the account to be used for debits in the account move'
+    )
+    credit_account_id = fields.Many2one(
+        'account.account', 
+        string='Credit Account', 
+        help='Select the account to be used for credits in the account move'
+    )
+    journal_id = fields.Many2one(
+        'account.journal', 
+        string='Journal', 
+        help='Select the journal to be used for the account move'
+    )
     partidas = fields.One2many(
         "cubicacion.order.line", "pago_line_id", string="partidas"
     )
@@ -368,6 +424,7 @@ class pagos(models.Model):
     DescuentoPorContrato = fields.Float(
         "Descuento Por Contrato", compute="_compute_descuento"
     )
+    moneda = fields.Many2one("res.currency", string="Moneda")
 
     # Aqui hacemos el calculo de cada una de las variables
 

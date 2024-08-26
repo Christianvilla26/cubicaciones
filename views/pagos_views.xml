@@ -3,7 +3,7 @@
         <field name="name">pagos_form_view</field>
         <field name="model">pagos.order</field>
         <field name="arch" type="xml">
-            <form string="Pagos Form">
+          <form string="Pagos Form">
                 <sheet>
                     <group>
                         <group>
@@ -12,7 +12,6 @@
                             <field name="proveedor"/>
                             <field name="Impuesto1"/>
                             <field name="Impuesto2"/>
-                            <field name="contract_line_id"/>
                         </group>
                         <group>
                             <field name="DescuentoPorContrato" readonly="1"/>
@@ -21,9 +20,22 @@
                             <field name="MontoDespuesDeImpuestos" readonly="1"/>
                             <field name="Facturada"/>
                             <field name="MontoDefinitivo" readonly="1"/>
-                            <field name="partidas"/>
+                  
+                        </group>
+                        <group>
+                            <field name="debit_account_id"/>
+                            <field name="credit_account_id"/>
+                            <field name="journal_id"/>
                         </group>
                     </group>
+                    <notebook>
+                        <page string="Partidas">
+                        <field name="partidas"/>
+                        </page>
+                        <page string="Insumo">
+                        <field name="contract_line_id"/>
+                        </page>
+                    </notebook>
                 </sheet>
                     <div class="oe_chatter">
                         <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>

@@ -20,6 +20,7 @@
                         <group>
                             <field name="date_start"/>
                             <field name="date_end"/>
+                            <field name="moneda"/>
                             <field name="total"/>
                         </group>
                     </group>
