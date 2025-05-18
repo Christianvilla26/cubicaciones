@@ -494,3 +494,8 @@ class linea_contrato(models.Model):
         for rec in self:
             rec.Monto = rec.avance
             rec.precio_unitario = rec.avance
+
+class cubicacionesAprobaciones(models.Model):
+    _inherit = "approval.product.line"
+
+    partida_nivel = fields.Many2one("partida.nivel", string="Nivel")
