@@ -499,3 +499,8 @@ class cubicacionesAprobaciones(models.Model):
     _inherit = "approval.product.line"
 
     partida_nivel = fields.Many2one("partida.nivel", string="Nivel")
+
+class cubicacionesRequisiciones(models.Model):
+    _inherit = "purchase.requisition.line"
+
+    partida_nivel = fields.Many2one("partida.nivel", string="Nivel")
