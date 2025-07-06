@@ -4,7 +4,7 @@
     "version": "15.0",
     "category": "Sale",
     "author": "Kritiam",
-    "depends": ["base", "mrp", "account", "web", "approvals"],
+    "depends": ["base", "mrp", "account", "web", "approvals", "purchase", "purchase_requisition"],
     "data": [
         "security/ir.model.access.csv",
         "views/pagos_wizzard.xml",
