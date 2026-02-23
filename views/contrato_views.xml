@@ -25,7 +25,7 @@
                                     <field name="contrato_id" invisible="1"/>
                                     <field name="name"/>
                                     <field name="Tipo"/>
-                                    <field name="avance" attrs="{'readonly': [('Tipo', '!=', 'avance')]}"/>
+                                    <field name="avance" readonly="[('Tipo', '!=', 'avance')]"/>
                                     <field name="Monto"/>
                                 </tree>
                             </field>

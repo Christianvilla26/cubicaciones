@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "Cubicaciones",
-    "version": "15.0",
+    "version": "17.0",
     "category": "Sale",
     "author": "Kritiam",
     "depends": ["base", "mrp", "account", "web", "approvals", "purchase", "purchase_requisition"],

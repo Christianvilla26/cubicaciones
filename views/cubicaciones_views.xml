@@ -29,7 +29,7 @@
                             <field name="partidas">
                                 <tree string="Partidas Tree" editable="bottom">
                                     <field name="cubicacion_order_id" invisible="1"/>
-                                    <field name="seleccion" attrs="{'invisible': [('Pagada','=', True)]}"/>
+                                    <field name="seleccion" invisible="[('Pagada','=', True)]"/>
                                     <field name="name"/>
                                     <field name="partida_type"/>
                                     <field name="partida_nivel"/>
@@ -37,7 +37,7 @@
                                     <field name="cantidad"/>
                                     <field name="unit_price"/>
                                     <field name="subtotal"/>
-                                    <field name="descontar" class="center_checkbox" attrs="{'invisible': [('Pagada','=', True)]}" />
+                                    <field name="descontar" class="center_checkbox" invisible="[('Pagada','=', True)]"/>
                                     <field name="monto_descontar" readonly="1" force_save="1"/>
                                     <field name="monto_neto"/>
                                     <field name="Pagada" readonly="1"/>
