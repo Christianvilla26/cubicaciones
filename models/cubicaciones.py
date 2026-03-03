@@ -316,12 +316,15 @@ class pagos_wizzard(models.TransientModel):
         MontoDef = MontoDef - Intercambio2
 
         # Create an account move
-        journal_id = self.env['account.move']._search_default_journal(journal_types=['purchase'])
+        journal = self.journal_id or self.env['account.journal'].search([
+            ('type', '=', 'purchase'),
+            ('company_id', '=', self.env.company.id),
+        ], limit=1)
         self.env['account.move'].create({
             'date': self.Fecha,
             'invoice_date': self.Fecha,
             'partner_id': self.proveedor.id,
-            'journal_id': journal_id.id,
+            'journal_id': journal.id,
             'currency_id': self.cubicacion.moneda.id,
             'move_type': 'in_invoice',
             'invoice_line_ids':
