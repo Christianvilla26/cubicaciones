@@ -66,7 +66,7 @@ class CubicacionOrderLine(models.Model):
     cubicacion_order_id = fields.Many2one(
         "cubicacion.order",
     )
-    seleccion = fields.Boolean("")
+    seleccion = fields.Boolean("Seleccion")
     name = fields.Char("Concepto", required=True)
     partida_nivel = fields.Many2one("partida.nivel", string="Nivel")
     partida_type = fields.Selection(
@@ -333,7 +333,6 @@ class pagos_wizzard(models.TransientModel):
                     'quantity': 1,
                     'price_unit': MontoDef,
                     'account_id': self.credit_account_id.id,
-                    'exclude_from_invoice_tab': False,
                 })],
         })
 
