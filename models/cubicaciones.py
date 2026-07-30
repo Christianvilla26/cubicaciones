@@ -286,8 +286,9 @@ class pagos_wizzard(models.TransientModel):
         today = date.today()
         Impuesto1 = 0
         Impuesto2 = 0
+        porcentaje_isr = 3.0
         if self.proveedor.company_type == "person":
-            Impuesto1 = self.monto * 0.02
+            Impuesto1 = self.monto * (porcentaje_isr / 100)
             Impuesto2 = self.monto * 0.0161
         MontosDespuesDeImpuestos = self.monto - (Impuesto1 + Impuesto2)
         company_id = self.env.user.company_id.id
@@ -345,8 +346,7 @@ class pagos_wizzard(models.TransientModel):
                 "contract_line_id2": self.insumo2.id,
                 "Monto": self.monto,
                 "MontoBruto": self.MontoBruto,
-                "Impuesto1": Impuesto1,
-                "Impuesto2": Impuesto2,
+                "porcentaje_isr": porcentaje_isr,
                 "MontoDespuesDeImpuestos": MontosDespuesDeImpuestos,
                 "RetencionIntercambio": Intercambio,
                 "RetencionIntercambio2": Intercambio2,
@@ -408,7 +408,8 @@ class pagos(models.Model):
     # partidas = fields.Many2one(comodel_name='cubicacion.order.line')
 
     # Al monto que recibimos arriba le sacamos las deducciones de ley
-    Impuesto1 = fields.Float("ISR (2.0%)", compute="_compute_taxes")
+    porcentaje_isr = fields.Float("ISR %", default=3.0)
+    Impuesto1 = fields.Float("ISR", compute="_compute_taxes")
     Impuesto2 = fields.Float("SS (1.6%)", compute="_compute_taxes")
 
     # Guardamos en una variable lo que queda despues de hacer todas las deducciones de los impuestos
@@ -431,11 +432,11 @@ class pagos(models.Model):
     # Aqui hacemos el calculo de cada una de las variables
 
     # Calculo de impuestos
-    @api.depends("Monto")
+    @api.depends("Monto", "porcentaje_isr", "proveedor")
     def _compute_taxes(self):
         for rec in self:
             if rec.proveedor.company_type == "person":
-                rec.Impuesto1 = rec.Monto * 0.02
+                rec.Impuesto1 = rec.Monto * (rec.porcentaje_isr / 100)
                 rec.Impuesto2 = rec.Monto * 0.0161
             else:
                 rec.Impuesto1 = 0.00

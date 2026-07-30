@@ -10,6 +10,7 @@
                             <field name="concepto"/>
                             <field name="Fecha"/>
                             <field name="proveedor"/>
+                            <field name="porcentaje_isr" readonly="1"/>
                             <field name="Impuesto1"/>
                             <field name="Impuesto2"/>
                         </group>
